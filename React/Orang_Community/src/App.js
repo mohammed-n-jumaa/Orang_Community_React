@@ -8,9 +8,9 @@ import Profile from "./pages/profile/Profile";
 import Login from "./pages/login/Login";
 import Register from "./pages/register/Register";
 import { DarkModeContext } from "./context/darkModeContext";
-import { AuthContext} from "./context/authContext"; // Wrap with AuthProvider
+import { AuthContext } from "./context/authContext"; // Wrap with AuthProvider
+import axios from "axios"; // Add this import
 import "./style.scss";
-import axios from "./axiosConfig";
 import { AuthProvider } from "./context/authContext";
 
 // Layout component

@@ -1,18 +1,15 @@
 import React, { useState, useContext } from "react";
-import { useNavigate } from "react-router-dom"; // Correct import
-import axios from "axios"; // Use configured Axios instance
-import { AuthContext } from "../../context/authContext"; // Import AuthContext
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { AuthContext } from "../../context/authContext";
 import "./login.scss";
-// export { AuthProvider };
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-
-  const navigate = useNavigate(); // Correct usage of useNavigate
-  const { setCurrentUser } = useContext(AuthContext); // Access setCurrentUser from AuthContext
+  const { setCurrentUser } = useContext(AuthContext);  // Access the context
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -21,17 +18,17 @@ const Login = () => {
         email,
         password,
       });
-  
-      console.log("Response from API:", response.data);
-  
+
       if (response.data.status) {
-        setCurrentUser(response.data.user); // Store user in context
-        localStorage.setItem("currentUser", JSON.stringify(response.data.user)); 
+        setCurrentUser(response.data.user); // Set user data in context
+        localStorage.setItem("currentUser", JSON.stringify(response.data.user)); // Store user
         localStorage.setItem("token", response.data.token); // Store token
-        navigate("/"); // Redirect after successful login
-  
-        // Navigate to home or dashboard
-        navigate("/"); 
+        console.log("Logged in user data:", response.data.user);
+
+        // Ensure the token is attached to axios requests
+        axios.defaults.headers["Authorization"] = `Bearer ${response.data.token}`;
+
+        navigate("/"); // Redirect to home page
       } else {
         setError(response.data.message || "Login failed. Please try again.");
       }
@@ -71,9 +68,7 @@ const Login = () => {
               onChange={(e) => setPassword(e.target.value)}
               required
             />
-            <button type="submit" disabled={isLoading}>
-              {isLoading ? "Logging in..." : "Login"}
-            </button>
+            <button type="submit">Login</button>
           </form>
           {error && <p className="error">{error}</p>}
         </div>

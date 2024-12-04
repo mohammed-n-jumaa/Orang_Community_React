@@ -1,19 +1,19 @@
 import { createContext, useState, useEffect } from "react";
+import axios from "axios"; // Add this import
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
 
+  // On initial load, check localStorage for the user and token
   useEffect(() => {
-    try {
-      const storedUser = localStorage.getItem("currentUser");
-      if (storedUser) {
-        setCurrentUser(JSON.parse(storedUser)); // Only parse if not null
-      }
-    } catch (error) {
-      console.error("Error parsing user data:", error);
-      setCurrentUser(null); // Fallback to null in case of error
+    const storedUser = localStorage.getItem("currentUser");
+    const storedToken = localStorage.getItem("token");
+    
+    if (storedUser && storedToken) {
+      setCurrentUser(JSON.parse(storedUser));
+      axios.defaults.headers["Authorization"] = `Bearer ${storedToken}`;
     }
   }, []);
 
