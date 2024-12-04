@@ -26,45 +26,29 @@ const Profile = () => {
         />
       </div>
       <div className="profileContainer">
-        <div className="uInfo">
-          <div className="left">
-            <a href="http://facebook.com">
-              <FacebookTwoToneIcon fontSize="large" />
-            </a>
-            <a href="http://facebook.com">
-              <InstagramIcon fontSize="large" />
-            </a>
-            <a href="http://facebook.com">
-              <TwitterIcon fontSize="large" />
-            </a>
-            <a href="http://facebook.com">
-              <LinkedInIcon fontSize="large" />
-            </a>
-            <a href="http://facebook.com">
-              <PinterestIcon fontSize="large" />
-            </a>
-          </div>
-          <div className="center">
-            <span>Jane Doe</span>
-            <div className="info">
-              <div className="item">
-                <PlaceIcon />
-                <span>USA</span>
-              </div>
-              <div className="item">
-                <LanguageIcon />
-                <span>lama.dev</span>
-              </div>
-            </div>
-            <button>follow</button>
-          </div>
-          <div className="right">
-            <EmailOutlinedIcon />
-            <MoreVertIcon />
-          </div>
+  <div className="uInfo">
+    <div className="left">
+      <a href="http://facebook.com">
+        <LinkedInIcon fontSize="large" className="icon" />
+      </a>
+    </div>
+    <div className="center">
+      <span className="name">Jane Doe</span>
+      <div className="info">
+        <div className="item">
+          <PlaceIcon className="icon" />
+          <span className="location">USA</span>
         </div>
-      <Posts/>
       </div>
+      <button className="editButton">Edit Profile</button>
+    </div>
+    <div className="right">
+      <EmailOutlinedIcon className="icon" />
+    </div>
+  </div>
+  <Posts />
+</div>
+
     </div>
   );
 };
