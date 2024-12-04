@@ -51,9 +51,9 @@ class ApiController extends Controller
                     'message' => 'Login successful',
                     'token' => $token,
                     'user' => [ // Use '=>' instead of ':'
-                        'id' => 1,
-                        'name' => 'John Doe',
-                        'email' => 'john.doe@example.com',
+                        'id' => $user->id,
+                        'name' => $user->name,
+                        'email' => $user->email,
                     ],
                 ]);
 
