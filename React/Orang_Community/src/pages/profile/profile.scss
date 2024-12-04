@@ -27,14 +27,15 @@
         top: 200px;
       }
     }
+
     .profileContainer {
       padding: 20px 70px;
 
-      @include mobile{
+      @include mobile {
         padding: 10px;
       }
 
-      @include tablet{
+      @include tablet {
         padding: 20px;
       }
 
@@ -52,9 +53,9 @@
         justify-content: space-between;
         margin-bottom: 20px;
 
-        @include mobile{
+        @include mobile {
           flex-direction: column;
-          height: 30vh;
+          height: auto;
           padding: 20px;
           margin-top: 100px;
         }
@@ -62,27 +63,35 @@
         .left {
           flex: 1;
           display: flex;
-          gap: 10px;
+          gap: 15px;
 
-          @include tablet{
+          @include tablet {
             flex-wrap: wrap;
           }
 
-          a{
+          a {
             color: themed("textColorSoft");
+            font-size: 1.5rem;
+            transition: color 0.3s ease;
+
+            &:hover {
+              color: themed("primary");
+            }
           }
         }
 
         .center {
-          flex: 1;
+          flex: 2;
           display: flex;
           flex-direction: column;
           align-items: center;
-          gap: 10px;
+          text-align: center;
+          gap: 15px;
 
           span {
-            font-size: 30px;
-            font-weight: 500;
+            font-size: 28px;
+            font-weight: 600;
+            color: themed("textColor");
           }
 
           .info {
@@ -94,21 +103,29 @@
             .item {
               display: flex;
               align-items: center;
-              gap: 5px;
+              gap: 8px;
               color: themed("textColorSoft");
 
               span {
-                font-size: 12px;
+                font-size: 14px;
               }
             }
           }
+
           button {
             border: none;
             background-color: #5271ff;
             color: white;
-            padding: 10px 20px;
+            padding: 10px 25px;
             border-radius: 5px;
             cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+
+            &:hover {
+              background-color: #3a56e0;
+            }
           }
         }
 
@@ -117,7 +134,18 @@
           display: flex;
           align-items: center;
           justify-content: flex-end;
-          gap: 10px;
+          gap: 15px;
+
+          .icon {
+            font-size: 1.5rem;
+            color: themed("textColorSoft");
+            cursor: pointer;
+            transition: color 0.3s ease;
+
+            &:hover {
+              color: themed("primary");
+            }
+          }
         }
       }
     }

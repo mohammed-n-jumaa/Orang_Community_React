@@ -20,24 +20,24 @@ const Navbar = () => {
     <div className="navbar">
       <div className="left">
         <Link to="/" style={{ textDecoration: "none" }}>
-          <span>lamasocial</span>
+          <span>Orange</span>
         </Link>
+        
         <HomeOutlinedIcon />
+        
+        
         {darkMode ? (
           <WbSunnyOutlinedIcon onClick={toggle} />
         ) : (
           <DarkModeOutlinedIcon onClick={toggle} />
         )}
-        <GridViewOutlinedIcon />
+        
         <div className="search">
           <SearchOutlinedIcon />
           <input type="text" placeholder="Search..." />
         </div>
       </div>
       <div className="right">
-        <PersonOutlinedIcon />
-        <EmailOutlinedIcon />
-        <NotificationsOutlinedIcon />
         <div className="user">
           <img
             src={currentUser.profilePic}
