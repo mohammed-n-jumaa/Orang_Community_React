@@ -3,8 +3,10 @@ import "./profile.scss";
 import React, { useState, useEffect } from "react";
 import axios from "../../api/axios";
 import { useNavigate } from "react-router-dom";
+import { FaUser, FaEnvelope, FaSchool, FaLinkedin } from "react-icons/fa"; // استيراد الأيقونات
 
-import Posts from "../../components/posts/Posts"
+import Posts from "../../components/posts/Posts";
+
 const Profile = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -24,7 +26,7 @@ const Profile = () => {
         setLoading(false);
       } catch (error) {
         console.error("Error fetching profile", error);
-        navigate("/login"); // إذا كان هناك خطأ، قم بتوجيه المستخدم إلى صفحة تسجيل الدخول
+        navigate("/login");
       }
     };
 
@@ -42,22 +44,36 @@ const Profile = () => {
           className="cover"
         />
         <img
-          src={user.profile_picture} // استخدام الصورة الشخصية للمستخدم من API
+          src={
+            user.profile_picture
+              ? user.profile_picture
+              : "https://via.placeholder.com/150"
+          }
           alt="profile"
           className="profilePic"
         />
       </div>
       <div className="profileContainer">
         <div className="uInfo">
-        
           <div className="center">
             <span className="name">{user.name}</span>
             <div className="info">
-           
+       
+              <div className="infoItem">
+                <FaEnvelope className="icon" />
+                <span>{user.email}</span>
+              </div>
+              <div className="infoItem">
+                <FaSchool className="icon" />
+                <span>{user.academy}</span>
+              </div>
+              <div className="infoItem">
+                <FaLinkedin className="icon" />
+                <span>{user.socialmedia}</span>
+              </div>
             </div>
             <button className="editButton">Edit Profile</button>
           </div>
-      
         </div>
         <Posts />
       </div>
