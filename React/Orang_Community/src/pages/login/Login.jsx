@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { AuthContext } from "../../context/authContext";
@@ -8,8 +8,20 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const { setCurrentUser } = useContext(AuthContext);  // Access the context
+  const { setCurrentUser } = useContext(AuthContext); // Access the context
   const navigate = useNavigate();
+
+  // Check localStorage for token and user data when the component mounts
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const currentUser = localStorage.getItem("currentUser");
+
+    if (token && currentUser) {
+      setCurrentUser(JSON.parse(currentUser)); // Set the user from localStorage to the context
+      axios.defaults.headers["Authorization"] = `Bearer ${token}`; // Set the axios authorization header
+      navigate("/"); // Redirect to home page if the user is already logged in
+    }
+  }, [setCurrentUser, navigate]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
