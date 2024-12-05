@@ -39,12 +39,19 @@ const Navbar = () => {
       </div>
       <div className="right">
         <div className="user">
+        <Link
+                to={`/profile/${currentUser.id}`}
+                style={{ textDecoration: "none", color: "inherit" , }}
+              >
           <img
             src={currentUser.profilePic}
             alt=""
           />
-          <span>{currentUser.name}</span>
+          <span>{currentUser.full_name}</span>
+              </Link>
         </div>
+        
+                
       </div>
     </div>
   );

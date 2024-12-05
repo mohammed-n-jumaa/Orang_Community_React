@@ -10,6 +10,6 @@ class ProfileController extends Controller
 {
     public function show(Request $request)
     {
-        return response()->json($request->user());
+        return response()->json(data: $request->user());
     }
 }

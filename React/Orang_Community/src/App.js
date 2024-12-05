@@ -74,7 +74,7 @@ function App() {
       element: <div>Page not found</div>, // Display a simple 404 message or a custom 404 page component
     },
   ]);
-
+// test update public side
   return (
     <AuthProvider> {/* Wrap the app with AuthProvider */}
       <RouterProvider router={router} />

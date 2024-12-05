@@ -1,23 +1,26 @@
 .register {
   height: 100vh;
-  background-color: rgb(193, 190, 255);
+  background-color: #f5f5f5; // Light background
   display: flex;
   align-items: center;
   justify-content: center;
 
   .card {
-    width: 50%;
+    width: 60%; // Slightly larger card for the register form
     display: flex;
-    flex-direction: row-reverse;
     background-color: white;
-    border-radius: 10px;
-    min-height: 600px;
+    border-radius: 15px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    min-height: 700px; // Taller to accommodate extra fields
     overflow: hidden;
 
     .left {
       flex: 1;
-      background: linear-gradient(rgba(39, 11, 96, 0.5), rgba(39, 11, 96, 0.5)),
-        url("https://images.pexels.com/photos/4881619/pexels-photo-4881619.jpeg?auto=compress&cs=tinysrgb&w=1600")
+      background: linear-gradient(
+          rgba(0, 0, 0, 0.5),
+          rgba(0, 0, 0, 0.5)
+        ),
+        url("https://orange.jo/sites/default/files/2023-02/Coding.png")
           center;
       background-size: cover;
       padding: 50px;
@@ -27,25 +30,34 @@
       color: white;
 
       h1 {
-        font-size: 100px;
-        line-height: 100px;
+        font-size: 70px;
+        line-height: 80px;
+        color: #ff7900; // Highlighted heading color
       }
-      
+
       p {
+        font-size: 16px;
+        line-height: 1.5;
       }
 
       span {
         font-size: 14px;
       }
-      
+
       button {
-        width: 50%;
+        width: 60%;
         padding: 10px;
         border: none;
-        background-color: white;
-        color: rebeccapurple;
+        background-color: #50be87; // Button color
+        color: white;
         font-weight: bold;
+        border-radius: 5px;
         cursor: pointer;
+        transition: background-color 0.3s ease;
+
+        &:hover {
+          background-color: #ff7900; // Hover effect
+        }
       }
     }
 
@@ -54,33 +66,55 @@
       padding: 50px;
       display: flex;
       flex-direction: column;
-      gap: 50px;
+      gap: 40px;
       justify-content: center;
 
       h1 {
-      color: #555;
+        color: black; // Main heading in black
+        font-size: 36px;
       }
-      
+
       form {
         display: flex;
         flex-direction: column;
-        gap: 30px;
-        
-        input {
-        border: none;
-        border-bottom: 1px solid lightgray;
-        padding: 20px 10px;
+        gap: 20px;
+
+        input,
+        select {
+          border: none;
+          border-bottom: 2px solid #ff7900; // Orange underline
+          padding: 15px 10px;
+          font-size: 16px;
+          color: black;
+          transition: border-color 0.3s ease;
+
+          &:focus {
+            border-bottom: 2px solid #50be87; // Green underline on focus
+            outline: none;
+          }
         }
-        
+
         button {
-          width: 50%;
+          width: 60%;
           padding: 10px;
           border: none;
-          background-color: #938eef;
+          background-color: #ff7900; // Main button color
           color: white;
           font-weight: bold;
+          border-radius: 5px;
           cursor: pointer;
+          transition: background-color 0.3s ease;
+
+          &:hover {
+            background-color: #50be87; // Hover effect
+          }
         }
+      }
+
+      .error {
+        color: red;
+        font-size: 14px;
+        margin-top: -20px;
       }
     }
   }
