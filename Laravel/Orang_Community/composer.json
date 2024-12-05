@@ -10,7 +10,9 @@
         "laravel/framework": "^10.10",
         "laravel/sanctum": "^3.3",
         "laravel/tinker": "^2.8",
-        "fruitcake/laravel-cors": "^2.2"
+        "tymon/jwt-auth": "^2.1"
+         "fruitcake/laravel-cors": "^2.2"
+
     },
     
     "require-dev": {
