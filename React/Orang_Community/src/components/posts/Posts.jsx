@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Post from "../post/Post";
 import axios from "axios";
 import "./posts.scss";
+import Navbar from "../navbar/Navbar";
 
 const Posts = () => {
   const [posts, setPosts] = useState([]);
@@ -25,7 +26,10 @@ const Posts = () => {
   return (
     <div className="posts">
       {posts.map((post) => (
+        <>
         <Post post={post} key={post.id} />
+        
+        </>
       ))}
     </div>
   );
