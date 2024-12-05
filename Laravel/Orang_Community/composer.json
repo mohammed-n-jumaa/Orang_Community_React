@@ -11,7 +11,10 @@
         "laravel/sanctum": "^3.3",
         "laravel/tinker": "^2.8",
         "tymon/jwt-auth": "^2.1"
+         "fruitcake/laravel-cors": "^2.2"
+
     },
+    
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
         "laravel/pint": "^1.0",
