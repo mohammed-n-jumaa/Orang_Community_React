@@ -1,7 +1,10 @@
 <?php
 
+use App\Http\Controllers\ActivityController as ControllersActivityController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\landingPage\PostController;
+use App\Http\Controllers\ActController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,6 +17,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
+Route::get("index", [PostController::class, 'index']);
+Route::post("posts/share", [PostController::class, 'share']);
+Route::get("activities", [ActController::class, 'getActivities']);
+Route::group([
+    "middleware" => ["auth:sanctum"]
+], function(){
+    
 });
