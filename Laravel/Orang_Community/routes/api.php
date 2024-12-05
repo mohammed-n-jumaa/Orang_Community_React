@@ -31,4 +31,3 @@ Route::group([
 
     Route::get('logout' , [ApiController::class , 'logout']);
 });
-Route::get('/profile', [ProfileController::class, 'show']);
