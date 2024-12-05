@@ -11,30 +11,48 @@ const Register = () => {
   const [academy, setAcademy] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [validationErrors, setValidationErrors] = useState({});
+
+  const validateField = (field, value) => {
+    const errors = { ...validationErrors };
+
+    if (field === "fullName" && !value.trim()) {
+      errors.fullName = "Full Name is required.";
+    } else if (field === "email" && (!value.trim() || !/\S+@\S+\.\S+/.test(value))) {
+      errors.email = "Invalid email format.";
+    } else if (field === "password" && value.length < 6) {
+      errors.password = "Password must be at least 6 characters.";
+    } else if (field === "passwordConfirmation" && value !== password) {
+      errors.passwordConfirmation = "Passwords do not match.";
+    } else {
+      delete errors[field];
+    }
+
+    setValidationErrors(errors);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     setError("");
 
-    // Validate that passwords match before submitting
-    if (password !== passwordConfirmation) {
-      setError("Passwords do not match.");
+    if (Object.keys(validationErrors).length > 0) {
+      setError("Please fix the validation errors.");
       setIsLoading(false);
       return;
     }
 
     try {
       const response = await axios.post("http://localhost:8000/api/register", {
-        full_name: fullName, // Send full_name as per your API
+        full_name: fullName,
         email,
         password,
-        password_confirmation: passwordConfirmation, // Include password confirmation for backend validation
+        password_confirmation: passwordConfirmation,
         academy,
       });
 
       alert("Registration successful!");
-      window.location.href = "/login"; // Redirect to login page after successful registration
+      window.location.href = "/login";
     } catch (error) {
       if (error.response && error.response.data) {
         setError(error.response.data.message || "Registration failed. Please try again.");
@@ -50,13 +68,11 @@ const Register = () => {
     <div className="register">
       <div className="card">
         <div className="left">
-          <h1>Lama Social.</h1>
+          <h1>Welcome!</h1>
           <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero cum,
-            alias totam numquam ipsa exercitationem dignissimos, error nam,
-            consequatur.
+            Join our community and explore amazing features designed just for you.
           </p>
-          <span>Do you have an account?</span>
+          <span>Already have an account?</span>
           <Link to="/login">
             <button>Login</button>
           </Link>
@@ -68,30 +84,48 @@ const Register = () => {
               type="text"
               placeholder="Full Name"
               value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              required
+              onChange={(e) => {
+                setFullName(e.target.value);
+                validateField("fullName", e.target.value);
+              }}
             />
+            {validationErrors.fullName && <p className="error">{validationErrors.fullName}</p>}
+
             <input
               type="email"
               placeholder="Email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
+              onChange={(e) => {
+                setEmail(e.target.value);
+                validateField("email", e.target.value);
+              }}
             />
+            {validationErrors.email && <p className="error">{validationErrors.email}</p>}
+
             <input
               type="password"
               placeholder="Password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
+              onChange={(e) => {
+                setPassword(e.target.value);
+                validateField("password", e.target.value);
+              }}
             />
+            {validationErrors.password && <p className="error">{validationErrors.password}</p>}
+
             <input
               type="password"
               placeholder="Confirm Password"
               value={passwordConfirmation}
-              onChange={(e) => setPasswordConfirmation(e.target.value)}
-              required
+              onChange={(e) => {
+                setPasswordConfirmation(e.target.value);
+                validateField("passwordConfirmation", e.target.value);
+              }}
             />
+            {validationErrors.passwordConfirmation && (
+              <p className="error">{validationErrors.passwordConfirmation}</p>
+            )}
+
             <select
               value={academy}
               onChange={(e) => setAcademy(e.target.value)}
@@ -106,6 +140,7 @@ const Register = () => {
               <option value="Aqaba">Aqaba</option>
               <option value="Balqa">Balqa</option>
             </select>
+
             <button type="submit" disabled={isLoading}>
               {isLoading ? "Registering..." : "Register"}
             </button>
