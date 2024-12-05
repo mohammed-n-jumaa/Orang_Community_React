@@ -11,7 +11,6 @@ import { formatDistanceToNow } from "date-fns";
 import BookmarkBorderOutlinedIcon from "@mui/icons-material/BookmarkBorderOutlined";
 import BookmarkOutlinedIcon from "@mui/icons-material/BookmarkOutlined";
 
-
 const Post = ({ post }) => {
   const [commentOpen, setCommentOpen] = useState(false);
 
@@ -68,13 +67,15 @@ const Post = ({ post }) => {
             {post.comments?.length || 0} Comments
           </div>
           <div className="item">
-          <BookmarkBorderOutlinedIcon />
-          Save
+            <BookmarkBorderOutlinedIcon />
+            Save
           </div>
         </div>
 
         {/* Comments Section */}
-        {commentOpen && <Comments comments={post.comments} />}
+        {commentOpen && (
+          <Comments comments={post.comments} postId={post.id} />
+        )}
       </div>
     </div>
   );
