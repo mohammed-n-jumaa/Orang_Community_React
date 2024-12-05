@@ -1,50 +1,47 @@
-import Login from "./pages/login/Login";
-import Register from "./pages/register/Register";
-import {
-  createBrowserRouter,
-  RouterProvider,
-  Route,
-  Outlet,
-  Navigate,
-} from "react-router-dom";
+import React, { useContext } from "react";
+import { createBrowserRouter, RouterProvider, Outlet, Navigate } from "react-router-dom";
 import Navbar from "./components/navbar/Navbar";
 import LeftBar from "./components/leftBar/LeftBar";
 import RightBar from "./components/rightBar/RightBar";
 import Home from "./pages/home/Home";
 import Profile from "./pages/profile/Profile";
-import "./style.scss";
-import { useContext } from "react";
+import Login from "./pages/login/Login";
+import Register from "./pages/register/Register";
 import { DarkModeContext } from "./context/darkModeContext";
-import { AuthContext } from "./context/authContext";
+import { AuthContext } from "./context/authContext"; // Wrap with AuthProvider
+import axios from "axios"; // Add this import
+import "./style.scss";
+import { AuthProvider } from "./context/authContext";
+
+// Layout component
+const Layout = () => {
+  const { darkMode } = useContext(DarkModeContext); // Dark mode context
+
+  return (
+    <div className={`theme-${darkMode ? "dark" : "light"}`}>
+      <Navbar />
+      <div style={{ display: "flex" }}>
+        <LeftBar />
+        <div style={{ flex: 6 }}>
+          <Outlet />
+        </div>
+        <RightBar />
+      </div>
+    </div>
+  );
+};
+
+// ProtectedRoute component to protect routes that need authentication
+const ProtectedRoute = ({ children }) => {
+  const { currentUser } = useContext(AuthContext); // Access currentUser from context
+
+  if (!currentUser) {
+    return <Navigate to="/login" />; // Redirect to login if no user is logged in
+  }
+  return children;
+};
 
 function App() {
-  const {currentUser} = useContext(AuthContext);
-
-  const { darkMode } = useContext(DarkModeContext);
-
-  const Layout = () => {
-    return (
-      <div className={`theme-${darkMode ? "dark" : "light"}`}>
-        <Navbar />
-        <div style={{ display: "flex" }}>
-          <LeftBar />
-          <div style={{ flex: 6 }}>
-            <Outlet />
-          </div>
-          <RightBar />
-        </div>
-      </div>
-    );
-  };
-
-  const ProtectedRoute = ({ children }) => {
-    if (!currentUser) {
-      return <Navigate to="/login" />;
-    }
-
-    return children;
-  };
-
   const router = createBrowserRouter([
     {
       path: "/",
@@ -72,12 +69,16 @@ function App() {
       path: "/register",
       element: <Register />,
     },
+    {
+      path: "*", // Catch-all route for 404 errors
+      element: <div>Page not found</div>, // Display a simple 404 message or a custom 404 page component
+    },
   ]);
 
   return (
-    <div>
+    <AuthProvider> {/* Wrap the app with AuthProvider */}
       <RouterProvider router={router} />
-    </div>
+    </AuthProvider>
   );
 }
 
