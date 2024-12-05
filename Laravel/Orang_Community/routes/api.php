@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\landingPage\PostController;
 use App\Http\Controllers\ActController;
+use App\Http\Controllers\landingPage\CommentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,6 +37,10 @@ Route::group([
     Route::get('profile' , action: [ApiController::class , 'profile']);
     Route::get("index", [PostController::class, 'index']);
     Route::post("posts/share", [PostController::class, 'share']);
+    
     Route::get("activities", [ActController::class, 'getActivities']);
     Route::get('logout' , [ApiController::class , 'logout']);
 });
+
+
+Route::post('comments', [CommentController::class, 'store']);

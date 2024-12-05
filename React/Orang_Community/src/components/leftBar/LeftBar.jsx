@@ -28,7 +28,7 @@ const LeftBar = () => {
               src={currentUser.profilePic}
               alt=""
             />
-            <span>{currentUser.name}</span>
+            <span>{currentUser.full_name}</span>
           </div>
           <div className="item">
             <img src={Friends} alt="" />
