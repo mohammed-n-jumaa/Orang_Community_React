@@ -4,6 +4,7 @@ use App\Http\Controllers\ActivityController as ControllersActivityController;
 use App\Http\Controllers\Api\ApiController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\landingPage\PostController;
 use App\Http\Controllers\ActController;
 use App\Http\Controllers\landingPage\CommentController;
