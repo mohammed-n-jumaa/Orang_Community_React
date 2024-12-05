@@ -1,7 +1,51 @@
+import { useState } from "react";
+import axios from "axios";
 import { Link } from "react-router-dom";
 import "./register.scss";
 
 const Register = () => {
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [passwordConfirmation, setPasswordConfirmation] = useState("");
+  const [academy, setAcademy] = useState("");
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError("");
+
+    // Validate that passwords match before submitting
+    if (password !== passwordConfirmation) {
+      setError("Passwords do not match.");
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      const response = await axios.post("http://localhost:8000/api/register", {
+        full_name: fullName, // Send full_name as per your API
+        email,
+        password,
+        password_confirmation: passwordConfirmation, // Include password confirmation for backend validation
+        academy,
+      });
+
+      alert("Registration successful!");
+      window.location.href = "/login"; // Redirect to login page after successful registration
+    } catch (error) {
+      if (error.response && error.response.data) {
+        setError(error.response.data.message || "Registration failed. Please try again.");
+      } else {
+        setError("An unexpected error occurred.");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="register">
       <div className="card">
@@ -14,18 +58,59 @@ const Register = () => {
           </p>
           <span>Do you have an account?</span>
           <Link to="/login">
-          <button>Login</button>
+            <button>Login</button>
           </Link>
         </div>
         <div className="right">
           <h1>Register</h1>
-          <form>
-            <input type="text" placeholder="Username" />
-            <input type="email" placeholder="Email" />
-            <input type="password" placeholder="Password" />
-            <input type="text" placeholder="Name" />
-            <button>Register</button>
+          <form onSubmit={handleSubmit}>
+            <input
+              type="text"
+              placeholder="Full Name"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              required
+            />
+            <input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+            <input
+              type="password"
+              placeholder="Confirm Password"
+              value={passwordConfirmation}
+              onChange={(e) => setPasswordConfirmation(e.target.value)}
+              required
+            />
+            <select
+              value={academy}
+              onChange={(e) => setAcademy(e.target.value)}
+              required
+            >
+              <option value="" disabled>
+                Select Academy
+              </option>
+              <option value="Amman">Amman</option>
+              <option value="Zarqa">Zarqa</option>
+              <option value="Irbid">Irbid</option>
+              <option value="Aqaba">Aqaba</option>
+              <option value="Balqa">Balqa</option>
+            </select>
+            <button type="submit" disabled={isLoading}>
+              {isLoading ? "Registering..." : "Register"}
+            </button>
           </form>
+          {error && <p className="error">{error}</p>}
         </div>
       </div>
     </div>
