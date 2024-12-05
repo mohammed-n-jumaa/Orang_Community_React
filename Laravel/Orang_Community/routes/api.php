@@ -1,8 +1,11 @@
 <?php
 
+use App\Http\Controllers\ActivityController as ControllersActivityController;
 use App\Http\Controllers\Api\ApiController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\landingPage\PostController;
+use App\Http\Controllers\ActController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,6 +22,9 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 
+
+
+
 Route::post('register' , [ApiController::class , 'register']);
 
 Route::post('login' , [ApiController::class , 'login']);
@@ -27,7 +33,8 @@ Route::group([
     'middleware' => ["auth:sanctum"]
 ], function(){
     Route::get('profile' , [ApiController::class , 'profile']);
-
+    Route::get("index", [PostController::class, 'index']);
+    Route::post("posts/share", [PostController::class, 'share']);
+    Route::get("activities", [ActController::class, 'getActivities']);
     Route::get('logout' , [ApiController::class , 'logout']);
 });
-
