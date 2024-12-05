@@ -7,46 +7,74 @@ import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import { Link } from "react-router-dom";
 import Comments from "../comments/Comments";
 import { useState } from "react";
+import { formatDistanceToNow } from "date-fns";
+import BookmarkBorderOutlinedIcon from "@mui/icons-material/BookmarkBorderOutlined";
+import BookmarkOutlinedIcon from "@mui/icons-material/BookmarkOutlined";
+
 
 const Post = ({ post }) => {
   const [commentOpen, setCommentOpen] = useState(false);
 
-  //TEMPORARY
+  // Check if the post is liked by the current user (placeholder for now)
   const liked = false;
+
+  // Format the time ago from `created_at`
+  const timeAgo = formatDistanceToNow(new Date(post.created_at), {
+    addSuffix: true, // Adds "ago" at the end
+  });
 
   return (
     <div className="post">
       <div className="container">
+        {/* User Info */}
         <div className="user">
           <div className="userInfo">
-            <img src={post.profilePic} alt="" />
+            <img
+              src={post.user?.image || "default-profile-pic.jpg"} // Default image fallback
+              alt={`${post.user?.full_name}'s profile`}
+            />
             <div className="details">
               <Link
-                to={`/profile/${post.userId}`}
+                to={`/profile/${post.user?.id}`}
                 style={{ textDecoration: "none", color: "inherit" }}
               >
-                <span className="name">{post.name}</span>
+                <span className="name">{post.user?.full_name}</span>
               </Link>
-              <span className="date">1 min ago</span>
+              <span className="date">{timeAgo}</span>
             </div>
           </div>
           <MoreHorizIcon />
         </div>
+
+        {/* Post Content */}
         <div className="content">
-          <p>{post.desc}</p>
-          <img src={post.img} alt="" />
+          <p>{post.content}</p>
+          {post.post_images?.length > 0 && (
+            <img
+              src={post.post_images[0]?.image_url} // Display the first image from the post_images array
+              alt="Post"
+            />
+          )}
         </div>
+
+        {/* Post Info */}
         <div className="info">
           <div className="item">
             {liked ? <FavoriteOutlinedIcon /> : <FavoriteBorderOutlinedIcon />}
-            12 Likes
+            {post.likes?.length || 0} Likes
           </div>
           <div className="item" onClick={() => setCommentOpen(!commentOpen)}>
             <TextsmsOutlinedIcon />
-            12 Comments
+            {post.comments?.length || 0} Comments
+          </div>
+          <div className="item">
+          <BookmarkBorderOutlinedIcon />
+          Save
           </div>
         </div>
-        {commentOpen && <Comments />}
+
+        {/* Comments Section */}
+        {commentOpen && <Comments comments={post.comments} />}
       </div>
     </div>
   );
