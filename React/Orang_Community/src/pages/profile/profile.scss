@@ -156,6 +156,11 @@
       flex-direction: column;
       gap: 20px; /* إضافة مسافة بين البوستات */
     }
+    .actions{
+      display: flex;
+      flex-direction: row;
+      gap: 450px;
+    }
 
     .post {
       background-color: themed("bg");

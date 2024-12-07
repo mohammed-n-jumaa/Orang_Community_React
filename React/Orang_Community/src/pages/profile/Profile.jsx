@@ -2,9 +2,9 @@ import "./profile.scss";
 import React, { useState, useEffect } from "react";
 import axios from "../../api/axios";
 import { FaEnvelope, FaSchool, FaLinkedin } from "react-icons/fa";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { useNavigate } from 'react-router-dom';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
   const [user, setUser] = useState(null);
@@ -18,10 +18,10 @@ const Profile = () => {
     password: "",
     image: null,
   });
-  const [posts, setPosts] = useState([]); // Store user posts
+  const [posts, setPosts] = useState([]); // Store filtered posts
   const navigate = useNavigate();
 
-  // Fetch user profile and posts
+  // Fetch user profile
   useEffect(() => {
     const fetchProfile = async () => {
       try {
@@ -41,7 +41,6 @@ const Profile = () => {
           password: "",
           image: null,
         });
-        setPosts(response.data.posts); // Store posts in state
         setLoading(false);
       } catch (error) {
         console.error("Error fetching profile", error);
@@ -53,6 +52,27 @@ const Profile = () => {
 
     fetchProfile();
   }, [navigate]);
+
+  // Fetch posts filtered by user
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const response = await axios.get("http://127.0.0.1:8000/api/index");
+        const allPosts = response.data.data;
+        const filteredPosts = allPosts.filter(
+          (post) => post.user_id === user?.id
+        );
+        setPosts(filteredPosts);
+      } catch (error) {
+        console.error("Error fetching posts", error);
+        toast.error("Failed to load posts");
+      }
+    };
+
+    if (user) {
+      fetchPosts();
+    }
+  }, [user]);
 
   // Loading state
   if (loading) return <div>Loading...</div>;
@@ -84,7 +104,6 @@ const Profile = () => {
     const token = localStorage.getItem("token");
     const formDataToSend = new FormData();
 
-    // Append form data
     for (let key in formData) {
       if (formData[key] !== null && formData[key] !== undefined) {
         formDataToSend.append(key, formData[key]);
@@ -101,26 +120,21 @@ const Profile = () => {
         },
       });
 
-      setUser(prevUser => ({
+      setUser((prevUser) => ({
         ...prevUser,
-        ...response.data.user
+        ...response.data.user,
       }));
 
       setIsEditing(false);
       toast.success(response.data.message || "Profile updated successfully!");
     } catch (error) {
       console.error("Error saving profile", error);
-      if (error.response) {
-        const errorMessage = error.response.data.message || 
-                             (error.response.data.errors 
-                              ? Object.values(error.response.data.errors)[0][0] 
-                              : "An error occurred");
-        toast.error(errorMessage);
-      } else if (error.request) {
-        toast.error("No response from server. Please check your connection.");
-      } else {
-        toast.error("Error setting up the request");
-      }
+      const errorMessage =
+        error.response?.data.message ||
+        (error.response?.data.errors
+          ? Object.values(error.response.data.errors)[0][0]
+          : "An error occurred");
+      toast.error(errorMessage);
     }
   };
 
@@ -138,7 +152,7 @@ const Profile = () => {
 
   return (
     <div className="profile">
-      <ToastContainer 
+      <ToastContainer
         position="top-center"
         autoClose={3000}
         hideProgressBar={false}
@@ -170,14 +184,20 @@ const Profile = () => {
           <div className="center">
             <span className="userName">{user?.full_name}</span>
             <div className="info">
-              <div className="infoItem" onClick={() => window.location.href = `mailto:${user?.email}`}>
+              <div
+                className="infoItem"
+                onClick={() => (window.location.href = `mailto:${user?.email}`)}
+              >
                 <FaEnvelope className="icon" />
               </div>
               <div className="infoItem">
                 <FaSchool className="icon" />
                 <span>{user?.academy}</span>
               </div>
-              <div className="infoItem" onClick={() => window.open(user?.socialmedia, '_blank')}>
+              <div
+                className="infoItem"
+                onClick={() => window.open(user?.socialmedia, "_blank")}
+              >
                 <FaLinkedin className="icon" />
               </div>
             </div>
@@ -187,7 +207,6 @@ const Profile = () => {
           </div>
         </div>
 
-        {/* Edit Profile Form */}
         {isEditing && (
           <div className="modal">
             <form onSubmit={handleSubmit} className="editForm">
@@ -240,69 +259,50 @@ const Profile = () => {
                 onChange={handleImageChange}
                 placeholder="Profile Image"
               />
-              <button type="submit" className="submitButton">Save</button>
+              <button type="submit" className="submitButton">
+                Save
+              </button>
             </form>
           </div>
         )}
 
-        {/* User Posts */}
         <div className="userPosts">
-          {posts && posts.length > 0 ? (
+          {posts.length > 0 ? (
             posts.map((post) => (
               <div key={post.id} className="post">
                 <div className="container">
                   <div className="user">
                     <div className="userInfo">
                       <img
-                        src={post.user?.profile_picture || "https://via.placeholder.com/40"}
+                        src={post.user.profile_image_url || "https://via.placeholder.com/40"}
                         alt="user"
                       />
                       <div className="details">
-                        <span className="name">{post.user?.full_name || "Unknown User"}</span>
+                        <span className="name">{post.user.full_name}</span>
                         <span className="date">{formatTime(post.created_at)}</span>
                       </div>
                     </div>
                   </div>
                   <div className="content">
                     <p>{post.content}</p>
-                    {post.image && <img src={post.image} alt="Post Image" />}
+                    {post.post_images.map((image) => (
+                      <img
+                        key={image.id}
+                        src={image.image_url}
+                        alt="post"
+                        className="postImage"
+                      />
+                    ))}
                   </div>
-                  <div className="info">
-                    <div className="item">
-                      Likes: {post.likes_count}
-                    </div>
-                    <div className="item">
-                      Comments: {post.comments.length}
-                    </div>
-                  </div>
-
-                  {/* Displaying Comments */}
-                  <div className="comments">
-                    {post.comments.length > 0 ? (
-                      post.comments.map((comment) => (
-                        <div key={comment.id} className="comment">
-                          <div className="commentUser">
-                            <img
-                              src={comment.user?.profile_picture || "https://via.placeholder.com/30"}
-                              alt="user"
-                            />
-                            <div className="commentDetails">
-                              <span className="commentName">{comment.user?.full_name || "Unknown User"}</span>
-                              <span className="commentTime">{formatTime(comment.created_at)}</span>
-                            </div>
-                          </div>
-                          <p className="commentContent">{comment.content}</p>
-                        </div>
-                      ))
-                    ) : (
-                      <p>No comments yet.</p>
-                    )}
+                  <div className="actions">
+                    <span className="like">Likes: {post.likes_count}</span>
+                    <span className="">Comments: {post.comments_count}</span>
                   </div>
                 </div>
               </div>
             ))
           ) : (
-            <p>No posts available.</p>
+            <p>No posts available</p>
           )}
         </div>
       </div>

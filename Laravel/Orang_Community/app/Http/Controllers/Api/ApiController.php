@@ -44,43 +44,44 @@ class ApiController extends Controller
     }
 
     public function login(Request $request)
-    {
-        // Validation for login
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required'
-        ]);
+{
+    // Validation for login
+    $request->validate([
+        'email' => 'required|email',
+        'password' => 'required'
+    ]);
 
-        $user = User::where('email', $request->email)->first();
+    $user = User::where('email', $request->email)->first();
 
-        if ($user) {
-            // Check if password matches
-            if (Hash::check($request->password, $user->password)) {
-                // Create token
-                $token = $user->createToken('myToken')->plainTextToken;
+    if ($user) {
+        // Check if password matches
+        if (Hash::check($request->password, $user->password)) {
+            // Create token
+            $token = $user->createToken('myToken')->plainTextToken;
 
-                return response()->json([
-                    'status' => true,
-                    'message' => 'Login successful',
-                    'token' => $token,
-                    'user' => [
-                        'id' => $user->id,
-                        'full_name' => $user->full_name, // Corrected field name
-                        'email' => $user->email,
-                    ],
-                ]);
-            }
             return response()->json([
-                'status' => false,
-                'message' => 'Password did not match'
+                'status' => true,
+                'message' => 'Login successful',
+                'token' => $token,
+                'user' => [
+                    'id' => $user->id,
+                    'full_name' => $user->full_name, // Corrected field name
+                    'email' => $user->email,
+                    'image' => $user->image,  // Include the user's image field
+                ],
             ]);
         }
-
         return response()->json([
             'status' => false,
-            'message' => 'Invalid login credentials'
+            'message' => 'Password did not match'
         ]);
     }
+
+    return response()->json([
+        'status' => false,
+        'message' => 'Invalid login credentials'
+    ]);
+}
 
     public function profile()
     {

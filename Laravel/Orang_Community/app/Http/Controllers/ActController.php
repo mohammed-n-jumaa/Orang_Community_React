@@ -4,37 +4,62 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use App\Models\Comment;
-use App\Models\User;
 use Illuminate\Http\Request;
 
 class ActController extends Controller
 {
     public function getActivities()
     {
-        // Fetch activities (posts and comments for example)
-        $posts = Post::with('user')->latest()->take(10)->get();
-        $comments = Comment::with('user')->latest()->take(10)->get();
+        // Fetch posts and comments with related data
+        $posts = Post::with(['user:id,full_name,image', 'postImages:id,post_id,image'])
+            ->latest()
+            ->take(10)
+            ->get();
+        
+        $comments = Comment::with(['user:id,full_name,image'])
+            ->latest()
+            ->take(10)
+            ->get();
 
-        // Combine posts and comments into one collection
-        $activities = $posts->map(function ($post) {
+        // Map posts to activity format
+        $postActivities = $posts->map(function ($post) {
             return [
-                'user' => $post->user,
+                'user' => [
+                    'name' => $post->user->full_name,
+                    'profile_image_url' => $post->user->image 
+                        ? url('uploads/profile/' . $post->user->image) 
+                        : null,
+                ],
                 'description' => 'posted a new status: ' . $post->content,
+                'images' => $post->postImages->map(function ($image) {
+                    return url('uploads/temp/' . $image->image);
+                }),
                 'createdAt' => $post->created_at,
             ];
-        })->merge(
-            $comments->map(function ($comment) {
-                return [
-                    'user' => $comment->user,
-                    'description' => 'commented on a post: ' . $comment->content,
-                    'createdAt' => $comment->created_at,
-                ];
-            })
-        );
+        });
 
-        // Sort activities by the created date
-        $activities = $activities->sortByDesc('createdAt');
+        // Map comments to activity format
+        $commentActivities = $comments->map(function ($comment) {
+            return [
+                'user' => [
+                    'name' => $comment->user->full_name,
+                    'profile_image_url' => $comment->user->image 
+                        ? url('uploads/profile/' . $comment->user->image) 
+                        : null,
+                ],
+                'description' => 'commented on a post: ' . $comment->content,
+                'createdAt' => $comment->created_at,
+            ];
+        });
 
-        return response()->json($activities);
+        // Merge and sort activities
+        $activities = $postActivities->merge($commentActivities)
+            ->sortByDesc('createdAt')
+            ->values(); // Reset keys for JSON response
+
+        return response()->json([
+            'success' => true,
+            'activities' => $activities,
+        ]);
     }
 }
