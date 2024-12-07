@@ -8,15 +8,18 @@ import Home from "./pages/home/Home";
 import Profile from "./pages/profile/Profile";
 import Login from "./pages/login/Login";
 import Register from "./pages/register/Register";
+import 'react-toastify/dist/ReactToastify.css';
+
 import { DarkModeContext } from "./context/darkModeContext";
-import { AuthContext } from "./context/authContext"; // Wrap with AuthProvider
-import axios from "axios"; // Add this import
-import "./style.scss";
+import { AuthContext } from "./context/authContext";
 import { AuthProvider } from "./context/authContext";
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Like from './pages/like/Like';  // Path to Likes.jsx
 import Saved from "./pages/saved/Saved";
 
+
+import "./style.scss";
+import PostDetail from "./components/postDetail/postDetail";
 
 // Layout component
 const Layout = () => {
@@ -39,10 +42,10 @@ const Layout = () => {
 
 // ProtectedRoute component to protect routes that need authentication
 const ProtectedRoute = ({ children }) => {
-  const { currentUser } = useContext(AuthContext); // Access currentUser from context
+  const { currentUser } = useContext(AuthContext);
 
   if (!currentUser) {
-    return <Navigate to="/login" />; // Redirect to login if no user is logged in
+    return <Navigate to="/login" />;
   }
   return children;
 };
@@ -57,15 +60,34 @@ function App() {
         </ProtectedRoute>
       ),
       children: [
-        { path: "/", element: <Home /> },
-        { path: "/profile/:id", element: <Profile /> },
+        {
+          path: "/",
+          element: <Home />,
+        },
+        {
+          path: "/profile/:id",
+          element: <Profile />,
+        },
+        {
+          path: "/post/:postId", // Add the new route for post details
+          element: <PostDetail />,
+        },
         { path: "/like", element: <Like /> },
         { path: "/save", element: <Saved /> },
       ],
     },
-    { path: "/login", element: <Login /> },
-    { path: "/register", element: <Register /> },
-    { path: "*", element: <div>Page not found</div> },
+    {
+      path: "/login",
+      element: <Login />,
+    },
+    {
+      path: "/register",
+      element: <Register />,
+    },
+    {
+      path: "*", // Catch-all route for 404 errors
+      element: <div>Page not found</div>,
+    },
   ]);
 
   return (

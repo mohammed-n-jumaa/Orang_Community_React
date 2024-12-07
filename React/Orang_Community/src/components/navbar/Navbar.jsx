@@ -2,19 +2,85 @@ import "./navbar.scss";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
 import WbSunnyOutlinedIcon from "@mui/icons-material/WbSunnyOutlined";
-import GridViewOutlinedIcon from "@mui/icons-material/GridViewOutlined";
-import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
-import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
-import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import { Link } from "react-router-dom";
-import { useContext } from "react";
+import { useContext, useState, useEffect, useRef } from "react";
 import { DarkModeContext } from "../../context/darkModeContext";
 import { AuthContext } from "../../context/authContext";
+import axios from "axios";
 
 const Navbar = () => {
   const { toggle, darkMode } = useContext(DarkModeContext);
   const { currentUser } = useContext(AuthContext);
+  // State for user details and profile dropdown visibility
+  const [userDetails, setUserDetails] = useState(null);
+  const [isProfileDropdownVisible, setIsProfileDropdownVisible] = useState(false);
+
+  // State for search functionality
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [isDropdownVisible, setIsDropdownVisible] = useState(false);
+  const searchRef = useRef(null);
+
+  // Fetch user details from the API
+  useEffect(() => {
+    const fetchUserDetails = async () => {
+      try {
+        const response = await axios.get("http://localhost:8000/api/nav/user-details");
+        setUserDetails(response.data.data); // Set user details
+      } catch (error) {
+        console.error("Error fetching user details:", error);
+      }
+    };
+
+    fetchUserDetails();
+  }, []);
+
+  // Handle search input
+  const handleSearch = async (e) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+
+    if (query.length > 2) {
+      try {
+        const response = await axios.get(
+          `http://localhost:8000/api/search-users?query=${query}`
+        );
+        setSearchResults(response.data.data || []);
+        setIsDropdownVisible(true);
+      } catch (error) {
+        console.error("Error fetching search results:", error);
+      }
+    } else {
+      setSearchResults([]);
+      setIsDropdownVisible(false);
+    }
+  };
+
+  // Hide dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (searchRef.current && !searchRef.current.contains(event.target)) {
+        setIsDropdownVisible(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  // Clear search and hide dropdown on user click
+  const handleUserClick = () => {
+    setSearchQuery("");
+    setSearchResults([]);
+    setIsDropdownVisible(false);
+  };
+
+  // Toggle profile dropdown visibility
+  const toggleProfileDropdown = () => {
+    setIsProfileDropdownVisible((prev) => !prev);
+  };
 
   return (
     <div className="navbar">
@@ -22,36 +88,102 @@ const Navbar = () => {
         <Link to="/" style={{ textDecoration: "none" }}>
           <span>Orange</span>
         </Link>
-        
         <HomeOutlinedIcon />
-        
-        
+
         {darkMode ? (
           <WbSunnyOutlinedIcon onClick={toggle} />
         ) : (
           <DarkModeOutlinedIcon onClick={toggle} />
         )}
-        
-        <div className="search">
+
+        {/* Search Box */}
+        <div className="search" ref={searchRef}>
           <SearchOutlinedIcon />
-          <input type="text" placeholder="Search..." />
+          <input
+            type="text"
+            placeholder="Search..."
+            value={searchQuery}
+            onChange={handleSearch}
+          />
+          {/* Search Results Dropdown */}
+          {isDropdownVisible && searchResults.length > 0 && (
+            <div className="search-results">
+              <ul>
+                {searchResults.map((user) => (
+                  <li key={user.id} onClick={handleUserClick}>
+                    <Link
+                      to={`/profile/${user.id}`}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "10px",
+                        textDecoration: "none",
+                      }}
+                    >
+                      <img
+                        src={user.image || "/default-avatar.png"}
+                        alt={user.full_name}
+                        style={{
+                          width: 40,
+                          height: 40,
+                          borderRadius: "50%",
+                        }}
+                      />
+                      <span>{user.full_name}</span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       </div>
+
       <div className="right">
-        <div className="user">
-        <Link
-                to={`/profile/${currentUser.id}`}
-                style={{ textDecoration: "none", color: "inherit" , }}
-              >
-          <img
-            src={currentUser.profilePic}
-            alt=""
-          />
-          <span>{currentUser.full_name}</span>
-              </Link>
+        <div className="user" onClick={toggleProfileDropdown}>
+          {/* Display user image and name from API */}
+          {userDetails ? (
+            <>
+              <img
+                src={currentUser?.profile_image_url || "/default-avatar.png"}
+                alt={currentUser.full_name}
+                style={{
+                  width: 40,
+                  height: 40,
+                  borderRadius: "50%",
+                }}
+              />
+              <span>{currentUser.full_name}</span>
+            </>
+          ) : (
+            <span>Loading...</span>
+          )}
+
+          {/* Profile Dropdown */}
+          {isProfileDropdownVisible && (
+            <div className="profile-dropdown">
+              <ul>
+                <li>
+                  <Link
+                    to={`/profile/${userDetails?.id}`}
+                    style={{ textDecoration: "none", color: "inherit" }}
+                  >
+                    View Profile
+                  </Link>
+                </li>
+
+                <li>
+                  <Link
+                    to="/logout"
+                    style={{ textDecoration: "none", color: "inherit" }}
+                  >
+                    Logout
+                  </Link>
+                </li>
+              </ul>
+            </div>
+          )}
         </div>
-        
-                
       </div>
     </div>
   );

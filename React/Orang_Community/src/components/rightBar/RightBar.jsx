@@ -1,21 +1,21 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { format } from "date-fns";
 import "./rightBar.scss";
 
 const RightBar = () => {
-  const [activities, setActivities] = useState([]); // State to store activities
-  const [loading, setLoading] = useState(true); // State to show loading spinner
-  const [error, setError] = useState(null); // State to handle errors
+  const [activities, setActivities] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchActivities = async () => {
       try {
         const response = await axios.get("http://127.0.0.1:8000/api/activities");
-        const activitiesArray = Object.values(response.data); // Convert object to array
-        setActivities(activitiesArray);
-        setLoading(false);
+        setActivities(response.data.activities); // Use the 'activities' array directly
       } catch (err) {
-        setError("Error fetching activities");
+        setError(err.response?.data?.message || "Error fetching activities");
+      } finally {
         setLoading(false);
       }
     };
@@ -23,13 +23,8 @@ const RightBar = () => {
     fetchActivities();
   }, []);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>{error}</div>;
-  }
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div className="error">{error}</div>;
 
   return (
     <div className="rightBar">
@@ -40,19 +35,22 @@ const RightBar = () => {
             activities.map((activity, index) => (
               <div className="user" key={index}>
                 <div className="userInfo">
+                  {/* Display user profile image */}
                   <img
-                    src={activity.user.image || "https://via.placeholder.com/150"}
-                    alt={activity.user.full_name}
+                    src={activity.user.profile_image_url}
+                    alt={activity.user.name}
+                    onError={(e) => (e.target.src = "https://via.placeholder.com/150")}
                   />
                   <p>
-                    <span>{activity.user.full_name}</span> {activity.description}
+                    <span>{activity.user.name}</span> {activity.description}
                   </p>
                 </div>
-                <span>{new Date(activity.createdAt).toLocaleString()}</span>
+                {/* Display formatted timestamp */}
+                <span>{format(new Date(activity.createdAt), "PPpp")}</span>
               </div>
             ))
           ) : (
-            <div>No activities found</div>
+            <div className="noActivities">No activities found</div>
           )}
         </div>
       </div>

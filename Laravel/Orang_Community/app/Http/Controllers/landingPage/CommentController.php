@@ -20,7 +20,7 @@ class CommentController extends Controller
         ]);
 
         // Get the logged-in user's ID
-        $user_id = 1;
+        $user_id = $request->user_id; 
         if (!$user_id) {
             return response()->json(['success' => false, 'message' => 'User not authenticated'], 401);
         }
