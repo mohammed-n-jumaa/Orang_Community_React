@@ -4,14 +4,17 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  // padding: 20px;
+  margin-bottom: 20px;
+
 
   .card {
-    width: 60%; // Slightly larger card for the register form
+    width: 70%; // Default card size
     display: flex;
     background-color: white;
     border-radius: 15px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    min-height: 700px; // Taller to accommodate extra fields
+    min-height: 600px; // Taller to accommodate extra fields
     overflow: hidden;
 
     .left {
@@ -23,6 +26,7 @@
         url("https://orange.jo/sites/default/files/2023-02/Coding.png")
           center;
       background-size: cover;
+      width: 200px;
       padding: 50px;
       display: flex;
       flex-direction: column;
@@ -83,6 +87,8 @@
         select {
           border: none;
           border-bottom: 2px solid #ff7900; // Orange underline
+          width: 100%;
+
           padding: 15px 10px;
           font-size: 16px;
           color: black;
@@ -115,6 +121,71 @@
         color: red;
         font-size: 14px;
         margin-top: -20px;
+      }
+    }
+  }
+
+  @media screen and (max-width: 1024px) {
+    .card {
+      width: 100%; // Smaller card width for tablets
+    }
+  }
+
+  @media screen and (max-width: 768px) {
+    .card {
+      flex-direction: column; // Stack sections vertically
+      width: 90%;
+      min-height: auto;
+
+      .left {
+        display: none; // Hide the left section on smaller screens
+      }
+
+      .right {
+        padding: 30px;
+
+        h1 {
+          font-size: 28px; // Adjust heading size
+        }
+
+        form {
+
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          input,
+          select,
+          button {
+            width: 90%; // Full width for inputs and buttons
+            
+          }
+        }
+      }
+    }
+  }
+
+  @media screen and (max-width: 480px) {
+    .card {
+      .right {
+        // padding: 20px;
+
+        h1 {
+          font-size: 22px; // Smaller heading font size for mobile
+        }
+
+        form {
+          gap: 15px; // Reduce gap between form fields
+display: flex;
+          align-items: center;
+          justify-content: center;
+          input,
+          select,
+          button {
+            // padding: 12px; // Adjust padding for better fit
+            width: 90%;
+            
+          }
+        }
       }
     }
   }

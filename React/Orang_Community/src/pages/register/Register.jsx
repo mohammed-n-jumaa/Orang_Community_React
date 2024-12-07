@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import "./register.scss";
@@ -12,6 +12,18 @@ const Register = () => {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [validationErrors, setValidationErrors] = useState({});
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsSmallScreen(window.innerWidth <= 768);
+    };
+
+    handleResize(); // Check initial screen size
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const validateField = (field, value) => {
     const errors = { ...validationErrors };
@@ -146,6 +158,16 @@ const Register = () => {
             </button>
           </form>
           {error && <p className="error">{error}</p>}
+
+          {/* Render only on smaller screens */}
+          {isSmallScreen && (
+            <p className="mobile-login">
+              Already have an account?{" "}
+              <Link to="/login" style={{ color: "#ff7900", fontWeight: "bold" }}>
+                Log in instead
+              </Link>
+            </p>
+          )}
         </div>
       </div>
     </div>
