@@ -12,7 +12,7 @@ const LikePost = () => {
   useEffect(() => {
     const fetchLikedPosts = async () => {
       try {
-        const res = await axios.get("http://127.0.0.1:8000/api/display/1");
+        const res = await axios.get("http://127.0.0.1:8000/api/display/3");
 
         console.log("Raw API Response:", res.data); // Log raw response
 
@@ -72,4 +72,4 @@ const LikePost = () => {
 };
 
 // Wrap component with memo for optimization (optional, if prop-based re-renders occur)
-export default memo(LikePost);
+export default memo(LikePost); 
