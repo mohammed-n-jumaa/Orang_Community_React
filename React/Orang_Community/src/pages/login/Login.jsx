@@ -45,14 +45,34 @@ const Login = () => {
         email,
         password,
       });
-
+  
       if (response.data.status) {
+<<<<<<< HEAD
         setCurrentUser(response.data.user);
         localStorage.setItem("currentUser", JSON.stringify(response.data.user));
         localStorage.setItem("token", response.data.token);
 
         axios.defaults.headers["Authorization"] = `Bearer ${response.data.token}`;
         navigate("/");
+=======
+        // Include the profile image URL if available
+        const userWithImage = {
+          ...response.data.user,
+          profile_image_url: response.data.user.image
+            ? `http://localhost:8000/uploads/profile/${response.data.user.image}` // Adjust the URL based on your backend setup
+            : null, // Set null if no image
+        };
+  
+        setCurrentUser(userWithImage); // Set user data in context
+        localStorage.setItem("currentUser", JSON.stringify(userWithImage)); // Store user data with image URL
+        localStorage.setItem("token", response.data.token); // Store token
+        console.log("Logged in user data:", userWithImage);
+  
+        // Ensure the token is attached to axios requests
+        axios.defaults.headers["Authorization"] = `Bearer ${response.data.token}`;
+  
+        navigate("/"); // Redirect to home page
+>>>>>>> ae8d10cf350a256db77827bd42b828e89176a537
       } else {
         setError(response.data.message || "Login failed. Please try again.");
       }
@@ -61,6 +81,7 @@ const Login = () => {
       setError("An unexpected error occurred. Please try again.");
     }
   };
+  
 
   return (
     <div className="login">
