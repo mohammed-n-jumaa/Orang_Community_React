@@ -1,6 +1,6 @@
 .login {
   height: 100vh;
-  background-color: rgb(193, 190, 255);
+  background-color: #f5f5f5; // Light background for a clean look
   display: flex;
   align-items: center;
   justify-content: center;
@@ -9,14 +9,18 @@
     width: 50%;
     display: flex;
     background-color: white;
-    border-radius: 10px;
+    border-radius: 15px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
     min-height: 600px;
     overflow: hidden;
 
     .left {
       flex: 1;
-      background: linear-gradient(rgba(39, 11, 96, 0.5), rgba(39, 11, 96, 0.5)),
-        url("https://images.pexels.com/photos/3228727/pexels-photo-3228727.jpeg?auto=compress&cs=tinysrgb&w=1600")
+      background: linear-gradient(
+          rgba(0, 0, 0, 0.5),
+          rgba(0, 0, 0, 0.5)
+        ),
+        url("https://orange.jo/sites/default/files/2023-02/Coding.png")
           center;
       background-size: cover;
       padding: 50px;
@@ -26,25 +30,34 @@
       color: white;
 
       h1 {
-        font-size: 100px;
-        line-height: 100px;
+        font-size: 80px;
+        line-height: 90px;
+        color: #ff7900; // Highlighted heading color
       }
-      
+
       p {
+        font-size: 16px;
+        line-height: 1.5;
       }
 
       span {
         font-size: 14px;
       }
-      
+
       button {
         width: 50%;
         padding: 10px;
         border: none;
-        background-color: white;
-        color: rebeccapurple;
+        background-color: #50be87; // Button color
+        color: white;
         font-weight: bold;
+        border-radius: 5px;
         cursor: pointer;
+        transition: background-color 0.3s ease;
+
+        &:hover {
+          background-color: #ff7900; // Hover effect
+        }
       }
     }
 
@@ -57,29 +70,50 @@
       justify-content: center;
 
       h1 {
-      color: #555;
+        color: black; // Main heading in black
+        font-size: 36px;
       }
-      
+
       form {
         display: flex;
         flex-direction: column;
-        gap: 30px;
-        
+        gap: 20px;
+
         input {
-        border: none;
-        border-bottom: 1px solid lightgray;
-        padding: 20px 10px;
+          border: none;
+          border-bottom: 2px solid #ff7900; // Orange underline
+          padding: 15px 10px;
+          font-size: 16px;
+          color: black;
+          transition: border-color 0.3s ease;
+
+          &:focus {
+            border-bottom: 2px solid #50be87; // Green underline on focus
+            outline: none;
+          }
         }
-        
+
         button {
           width: 50%;
           padding: 10px;
           border: none;
-          background-color: #938eef;
+          background-color: #ff7900; // Main button color
           color: white;
           font-weight: bold;
+          border-radius: 5px;
           cursor: pointer;
+          transition: background-color 0.3s ease;
+
+          &:hover {
+            background-color: #50be87; // Hover effect
+          }
         }
+      }
+
+      .error {
+        color: red;
+        font-size: 14px;
+        margin-top: -30px;
       }
     }
   }

@@ -2,14 +2,15 @@
 
 namespace App\Models;
 
+
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Sanctum\PersonalAccessToken;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Laravel\Sanctum\HasApiTokens;  // استخدام التوكنات الشخصية
+use Laravel\Sanctum\HasApiTokens;  
 
 class User extends Model
 {
-    use HasFactory, HasApiTokens; // إضافة HasApiTokens للتعامل مع التوكنات
+    use HasFactory, HasApiTokens; 
 
     protected $fillable = [
         'full_name',

@@ -149,5 +149,16 @@
         }
       }
     }
+    .icon {
+      font-size: 2rem; /* تغيير الحجم إلى 2rem أو أي حجم تفضله */
+      color: themed("textColorSoft");
+      transition: color 0.3s ease;
+    
+      &:hover {
+        color: themed("primary");
+      }
+    }
+    
   }
+  
 }

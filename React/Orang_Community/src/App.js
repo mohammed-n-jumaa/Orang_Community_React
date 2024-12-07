@@ -1,3 +1,4 @@
+
 import React, { useContext } from "react";
 import { createBrowserRouter, RouterProvider, Outlet, Navigate } from "react-router-dom";
 import Navbar from "./components/navbar/Navbar";
@@ -12,10 +13,14 @@ import { AuthContext } from "./context/authContext"; // Wrap with AuthProvider
 import axios from "axios"; // Add this import
 import "./style.scss";
 import { AuthProvider } from "./context/authContext";
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Like from './pages/like/Like';  // Path to Likes.jsx
+import Saved from "./pages/saved/Saved";
+
 
 // Layout component
 const Layout = () => {
-  const { darkMode } = useContext(DarkModeContext); // Dark mode context
+  const { darkMode } = useContext(DarkModeContext);
 
   return (
     <div className={`theme-${darkMode ? "dark" : "light"}`}>
@@ -30,6 +35,7 @@ const Layout = () => {
     </div>
   );
 };
+
 
 // ProtectedRoute component to protect routes that need authentication
 const ProtectedRoute = ({ children }) => {
@@ -51,32 +57,19 @@ function App() {
         </ProtectedRoute>
       ),
       children: [
-        {
-          path: "/",
-          element: <Home />,
-        },
-        {
-          path: "/profile/:id",
-          element: <Profile />,
-        },
+        { path: "/", element: <Home /> },
+        { path: "/profile/:id", element: <Profile /> },
+        { path: "/like", element: <Like /> },
+        { path: "/save", element: <Saved /> },
       ],
     },
-    {
-      path: "/login",
-      element: <Login />,
-    },
-    {
-      path: "/register",
-      element: <Register />,
-    },
-    {
-      path: "*", // Catch-all route for 404 errors
-      element: <div>Page not found</div>, // Display a simple 404 message or a custom 404 page component
-    },
+    { path: "/login", element: <Login /> },
+    { path: "/register", element: <Register /> },
+    { path: "*", element: <div>Page not found</div> },
   ]);
 
   return (
-    <AuthProvider> {/* Wrap the app with AuthProvider */}
+    <AuthProvider>
       <RouterProvider router={router} />
     </AuthProvider>
   );

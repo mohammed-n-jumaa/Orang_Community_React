@@ -32,7 +32,7 @@ class PostController extends Controller
     
     
     {
-        $user_id = 1; // Get the authenticated user
+        $user_id = 3; // Get the authenticated user
         $request->validate([
             'content' => 'required|string',
             'image' => 'nullable|image|mimes:jpg,png,jpeg,gif|max:10240', // Validate image
