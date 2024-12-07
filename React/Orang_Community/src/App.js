@@ -9,7 +9,7 @@ import Login from "./pages/login/Login";
 import Register from "./pages/register/Register";
 import { DarkModeContext } from "./context/darkModeContext";
 import { AuthContext } from "./context/authContext"; // Wrap with AuthProvider
-import axios from "axios"; // Add this import
+import axios from "axios";
 import "./style.scss";
 import { AuthProvider } from "./context/authContext";
 
