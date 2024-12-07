@@ -6,23 +6,35 @@
     position: sticky;
     top: 70px;
     height: calc(100vh - 70px);
-    overflow: scroll;
+    overflow-y: auto;
     background-color: themed("bg");
     color: themed("textColor");
+    padding: 20px 0;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.05);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
 
-    @include mobile{
+    @include mobile {
       display: none;
     }
 
     &::-webkit-scrollbar {
-      display: none;
+      width: 6px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: themed("border");
+      border-radius: 10px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: none;
     }
 
     .container {
-      padding: 20px;
+      padding: 0 20px;
 
       hr {
-        margin: 20px 0px;
+        margin: 20px 0;
         border: none;
         height: 0.5px;
         background-color: themed("border");
@@ -31,40 +43,52 @@
       .menu {
         display: flex;
         flex-direction: column;
-        gap: 20px;
-
-        span {
-          font-size: 12px;
-        }
-
-        .user {
-          display: flex;
-          align-items: center;
-          gap: 10px;
-
-          img {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            object-fit: cover;
-          }
-
-          span {
-            font-size: 14px;
-          }
-        }
+        gap: 30px;
 
         .item {
           display: flex;
           align-items: center;
-          gap: 10px;
+          gap: 20px;
+          padding: 12px;
+          border-radius: 10px;
+          transition: all 0.3s ease;
+          cursor: pointer;
+          background: linear-gradient(45deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.3));
 
-          img {
-            width: 30px;
+          &:hover {
+            background: linear-gradient(45deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.5));
+            box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+            transform: translateX(10px);
           }
 
-          span {
-            font-size: 14px;
+          .icon-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+
+            .icon {
+              font-size: 30px;
+              color: #ff7f00; /* Orange color */
+              transition: transform 0.3s ease, color 0.3s ease;
+              flex-shrink: 0;
+
+              &:hover {
+                transform: scale(1.1);
+                color: #e87e00; /* Darker orange on hover */
+              }
+            }
+
+            .link {
+              font-size: 16px;
+              font-weight: bold;
+              color: themed("textColor");
+              text-decoration: none;
+              transition: color 0.3s ease;
+
+              &:hover {
+                color: themed("hoverTextColor");
+              }
+            }
           }
         }
       }
