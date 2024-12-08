@@ -95,14 +95,14 @@ class ApiController extends Controller
         ]);
     }
 
-    // public function logout()
-    // {
-    //     // Revoke all tokens for the authenticated user
-    //     auth()->user()->tokens()->delete();
+    public function logout()
+    {
+        // Revoke all tokens for the authenticated user
+        auth()->user()->tokens()->delete();
 
-    //     return response()->json([
-    //         'status' => true,
-    //         'message' => 'User logged out successfully'
-    //     ]);
-    // }
+        return response()->json([
+            'status' => true,
+            'message' => 'User logged out successfully'
+        ]);
+    }
 }

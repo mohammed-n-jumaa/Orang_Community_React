@@ -1,26 +1,33 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "../../context/authContext";
-import { FaHome, FaUserCircle, FaHeart, FaBookmark, FaSignOutAlt } from "react-icons/fa"; // Font Awesome Icons
+import { FaHome, FaUserCircle, FaHeart, FaBookmark, FaSignOutAlt } from "react-icons/fa";
+import axios from "axios";
 import "./leftBar.scss";
-import "./leftBar.scss";
-import Friends from "../../assets/1.png";
-import Groups from "../../assets/2.png";
-import Market from "../../assets/3.png";
-import Watch from "../../assets/4.png";
-import Memories from "../../assets/5.png";
-import Events from "../../assets/6.png";
-import Gaming from "../../assets/7.png";
-import Gallery from "../../assets/8.png";
-import Videos from "../../assets/9.png";
-import Messages from "../../assets/10.png";
-import Tutorials from "../../assets/11.png";
-import Courses from "../../assets/12.png";
-import Fund from "../../assets/13.png";
-
 
 const LeftBar = () => {
-  const { currentUser } = useContext(AuthContext);
+  const { currentUser, setCurrentUser } = useContext(AuthContext); // Assuming you have a function to update user context
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      // Send a logout request to the backend
+      await axios.post("http://localhost:8000/api/logout", {}, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      // Clear token from localStorage and update context
+      localStorage.removeItem("token");
+      setCurrentUser(null); // Clear user context
+
+      // Redirect to login page
+      navigate("/login");
+    } catch (error) {
+      console.error("Error during logout:", error);
+    }
+  };
 
   return (
     <div className="leftBar">
@@ -36,7 +43,7 @@ const LeftBar = () => {
           <div className="item">
             <div className="icon-wrapper">
               <FaUserCircle className="icon" />
-              <Link to={`/profile/${currentUser.id}`} className="link">Profile</Link>
+              <Link to={`/profile/${currentUser?.id}`} className="link">Profile</Link>
             </div>
           </div>
 
@@ -57,7 +64,9 @@ const LeftBar = () => {
           <div className="item">
             <div className="icon-wrapper">
               <FaSignOutAlt className="icon" />
-              <Link to="/" className="link">Logout</Link>
+              <a href="#" onClick={handleLogout} className="link">
+                Logout
+              </a>
             </div>
           </div>
         </div>

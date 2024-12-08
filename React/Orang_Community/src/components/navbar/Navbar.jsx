@@ -85,10 +85,16 @@ const Navbar = () => {
   return (
     <div className="navbar">
       <div className="left">
-        <Link to="/" style={{ textDecoration: "none" }}>
-          <span>Orange</span>
+        
+      <img 
+          src="https://yo.orange.jo/sites/default/files/logo_1.png" 
+          alt="Logo" 
+          className="logo-img" 
+        />
+        <Link to="/" style={{ textDecoration: "none"}}>
+          <span className="logo-text">Community</span>
         </Link>
-        <HomeOutlinedIcon />
+       
 
         {darkMode ? (
           <WbSunnyOutlinedIcon onClick={toggle} />
@@ -162,25 +168,7 @@ const Navbar = () => {
           {/* Profile Dropdown */}
           {isProfileDropdownVisible && (
             <div className="profile-dropdown">
-              <ul>
-                <li>
-                  <Link
-                    to={`/profile/${userDetails?.id}`}
-                    style={{ textDecoration: "none", color: "inherit" }}
-                  >
-                    View Profile
-                  </Link>
-                </li>
-
-                <li>
-                  <Link
-                    to="/logout"
-                    style={{ textDecoration: "none", color: "inherit" }}
-                  >
-                    Logout
-                  </Link>
-                </li>
-              </ul>
+              
             </div>
           )}
         </div>

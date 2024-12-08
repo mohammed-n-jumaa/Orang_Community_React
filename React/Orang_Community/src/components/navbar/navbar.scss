@@ -17,15 +17,21 @@
     .left {
       display: flex;
       align-items: center;
-      gap: 30px;
+      gap: 12px;
 
       // Logo Styling
       span {
         font-weight: bold;
         font-size: 20px;
-        color: themed("logo");
+        color: #ff7900;
       }
+// .logo-text{
+//   color: #ff7900;
+//   font-weight: bold;
+//   font-size: 20px;
+//   margin-left: 5px;
 
+// }
       // Search Section
       .search {
         display: flex;
@@ -35,6 +41,7 @@
         border-radius: 5px;
         padding: 5px;
         position: relative; // Position relative for proper placement of child elements
+        margin-left: 50px;
 
         input {
           border: none;
@@ -56,7 +63,7 @@
         .search-results {
           position: absolute;
           top: 100%; // Positions the results directly below the search input
-          left: 0; // Aligns with the left edge of the search container
+          left: 10px; // Aligns with the left edge of the search container
           background: white;
           border: 1px solid #ccc;
           border-radius: 5px;

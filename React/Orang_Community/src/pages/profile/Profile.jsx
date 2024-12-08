@@ -166,7 +166,7 @@ const Profile = () => {
 
       <div className="images">
         <img
-          src="https://images.pexels.com/photos/13440765/pexels-photo-13440765.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+          src="https://orange.jo/sites/default/files/styles/640x320/public/feeds/coding-academy_366.jpg?itok=PO89YTUV"
           alt="cover"
           className="cover"
         />

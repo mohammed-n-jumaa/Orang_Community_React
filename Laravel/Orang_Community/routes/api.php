@@ -49,3 +49,5 @@ Route::group([
 Route::get("index", [PostController::class, 'index']);
 Route::post("posts/share", [PostController::class, 'share']);
 Route::get('/posts/{postId}', [PostController::class, 'show']);
+// routes/api.php
+Route::post('/logout', [ApiController::class, 'logout'])->middleware('auth:sanctum');
