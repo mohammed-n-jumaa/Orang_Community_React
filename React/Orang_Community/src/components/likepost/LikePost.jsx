@@ -1,23 +1,25 @@
-import { useEffect, useState, memo } from "react"; // Import memo correctly
-import Post from "../post/Post";
-import axios from "axios";
-import "./LikePost.scss";
+import { useEffect, useState, memo } from "react"; 
+import Post from "../post/Post"; 
+import axios from "axios"; 
+import "./LikePost.scss"; 
 
-// Wrap the component with memo to prevent unnecessary re-renders
-const LikePost = () => {
-  const [likedPosts, setLikedPosts] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+const LikePost = () => { 
+  const [likedPosts, setLikedPosts] = useState([]); 
+  const [isLoading, setIsLoading] = useState(true); 
   const [error, setError] = useState(null);
 
-  useEffect(() => {
+  useEffect(() => { 
     const fetchLikedPosts = async () => {
       try {
-        const res = await axios.get("http://127.0.0.1:8000/api/display/3");
-
-        console.log("Raw API Response:", res.data); // Log raw response
-
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        
+        // Use currentUser.id directly in the API request
+        const res = await axios.get(`http://127.0.0.1:8000/api/display/${currentUser.id}`);
+        
+        console.log("Raw API Response:", res.data); // Log the raw response
+        
         if (res.data.data) {
-          // Use map to create transformed posts
+          // Map and transform the response data
           const transformedPosts = res.data.data.map((likedPost) => ({
             ...likedPost,
             id: likedPost.post_id, // Unique identifier
@@ -26,11 +28,10 @@ const LikePost = () => {
             comments: likedPost.post_comments,
             post_images: likedPost.post_images,
             isLiked: true,
-            likes: likedPost.likes || [], // Use the actual likes from the backend
-
+            likes: likedPost.likes || [], // Ensure likes are included
           }));
 
-          // Remove duplicates by `id` more efficiently
+          // Remove duplicates based on 'id' to ensure unique posts
           const uniquePosts = Array.from(
             new Map(transformedPosts.map(post => [post.id, post])).values()
           );
@@ -48,7 +49,7 @@ const LikePost = () => {
     };
 
     fetchLikedPosts();
-  }, []); // Empty dependency array ensures it runs only once
+  }, []); // Empty dependency array ensures the effect runs only once
 
   if (isLoading) return <div>Loading liked posts...</div>;
   if (error) return <div>Error loading liked posts</div>;
@@ -71,5 +72,5 @@ const LikePost = () => {
   );
 };
 
-// Wrap component with memo for optimization (optional, if prop-based re-renders occur)
+// Wrap component with memo to optimize rendering
 export default memo(LikePost); 
