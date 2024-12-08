@@ -4,7 +4,7 @@ namespace App\Http\Controllers\landingPage;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\User; // Ensure you are importing the correct model
+use App\Models\User;
 
 class UserController extends Controller
 {
@@ -20,12 +20,11 @@ class UserController extends Controller
             ->get();
 
         // Modify image URL if exists
-        $users->transform(function ($user) {
+        $users->each(function ($user) {
             if ($user->image) {
-                // Assuming images are saved in the 'public/uploads/temp' folder
-                $user->image = asset('uploads/temp/' . $user->image);
+                // Assuming images are stored in 'uploads/profile' folder
+                $user->image_url = url('uploads/profile/' . $user->image);
             }
-            return $user;
         });
 
         return response()->json([

@@ -8,23 +8,38 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const { setCurrentUser } = useContext(AuthContext); // Access the context
+  const { setCurrentUser } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  // Check localStorage for token and user data when the component mounts
   useEffect(() => {
     const token = localStorage.getItem("token");
     const currentUser = localStorage.getItem("currentUser");
 
     if (token && currentUser) {
-      setCurrentUser(JSON.parse(currentUser)); // Set the user from localStorage to the context
-      axios.defaults.headers["Authorization"] = `Bearer ${token}`; // Set the axios authorization header
-      navigate("/"); // Redirect to home page if the user is already logged in
+      setCurrentUser(JSON.parse(currentUser));
+      axios.defaults.headers["Authorization"] = `Bearer ${token}`;
+      navigate("/"); // Redirect if logged in
     }
   }, [setCurrentUser, navigate]);
 
+  const validateForm = () => {
+    if (!email.trim() || !/\S+@\S+\.\S+/.test(email)) {
+      setError("Invalid email format.");
+      return false;
+    }
+    if (!password.trim() || password.length < 6) {
+      setError("Password must be at least 6 characters.");
+      return false;
+    }
+    return true;
+  };
+
   const handleLogin = async (e) => {
     e.preventDefault();
+    setError(""); // Reset error
+
+    if (!validateForm()) return;
+
     try {
       const response = await axios.post("http://localhost:8000/api/login", {
         email,
@@ -63,14 +78,15 @@ const Login = () => {
     <div className="login">
       <div className="card">
         <div className="left">
-          <h1>Hello World.</h1>
-          <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero cum,
-            alias totam numquam ipsa exercitationem dignissimos, error nam,
-            consequatur.
-          </p>
-          <span>Don't you have an account?</span>
-          <button onClick={() => navigate("/register")}>Register</button>
+          <h1>Welcome Back!</h1>
+          <p>Log in to access exclusive features and stay connected with the community.</p>
+          <span>Don't have an account?</span>
+          <span
+            className="register-text"
+            onClick={() => navigate("/register")}
+          >
+            Register
+          </span>
         </div>
         <div className="right">
           <h1>Login</h1>
@@ -92,6 +108,15 @@ const Login = () => {
             <button type="submit">Login</button>
           </form>
           {error && <p className="error">{error}</p>}
+          <div className="register-link-mobile">
+            <span className="register-now-mobile">Don't have an account? </span>
+            <span
+              className="register-text-mobile"
+              onClick={() => navigate("/register")}
+            >
+              Register
+            </span>
+          </div>
         </div>
       </div>
     </div>

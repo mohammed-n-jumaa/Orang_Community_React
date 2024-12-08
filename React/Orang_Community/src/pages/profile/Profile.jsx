@@ -5,6 +5,8 @@ import { FaEnvelope, FaSchool, FaLinkedin } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
+import Image from "../../assets/Orange.jfif"; // Default image
+
 
 const Profile = () => {
   const [user, setUser] = useState(null);
@@ -166,7 +168,7 @@ const Profile = () => {
 
       <div className="images">
         <img
-          src="https://images.pexels.com/photos/13440765/pexels-photo-13440765.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+          src={Image}
           alt="cover"
           className="cover"
         />
