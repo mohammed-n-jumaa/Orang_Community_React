@@ -1,3 +1,4 @@
+
 import React, { useContext } from "react";
 import { createBrowserRouter, RouterProvider, Outlet, Navigate } from "react-router-dom";
 import Navbar from "./components/navbar/Navbar";
@@ -7,10 +8,15 @@ import Home from "./pages/home/Home";
 import Profile from "./pages/profile/Profile";
 import Login from "./pages/login/Login";
 import Register from "./pages/register/Register";
+import 'react-toastify/dist/ReactToastify.css';
 
 import { DarkModeContext } from "./context/darkModeContext";
 import { AuthContext } from "./context/authContext";
 import { AuthProvider } from "./context/authContext";
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Like from './pages/like/Like';  // Path to Likes.jsx
+import Saved from "./pages/saved/Saved";
+
 
 import "./style.scss";
 import PostDetail from "./components/postDetail/postDetail";
@@ -33,14 +39,21 @@ const Layout = () => {
   );
 };
 
+
 // ProtectedRoute component to protect routes that need authentication
 const ProtectedRoute = ({ children }) => {
-  const { currentUser } = useContext(AuthContext);
+  const { currentUser, loading } = useContext(AuthContext); // Add loading from AuthContext
+
+  if (loading) {
+    // Show a loading spinner or placeholder during initialization
+    return <div>Loading...</div>; // Placeholder while authentication initializes
+  }
 
   if (!currentUser) {
-    return <Navigate to="/login" />;
+    return <Navigate to="/login" />; // Redirect to login if no user is authenticated
   }
-  return children;
+
+  return children; // Render children if authenticated
 };
 
 function App() {
@@ -65,6 +78,8 @@ function App() {
           path: "/post/:postId", // Add the new route for post details
           element: <PostDetail />,
         },
+        { path: "/like", element: <Like /> },
+        { path: "/save", element: <Saved /> },
       ],
     },
     {

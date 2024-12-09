@@ -2,74 +2,40 @@
 
 namespace App\Models;
 
-
 use Illuminate\Database\Eloquent\Model;
-use Laravel\Sanctum\PersonalAccessToken;
+use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Laravel\Sanctum\HasApiTokens;  
 
 class User extends Model
 {
-    use HasFactory, HasApiTokens; 
+    use HasFactory, HasApiTokens;
 
     protected $fillable = [
-        'full_name',
-        'email',
-        'password',
-        'image',
-        'academy',
-        'socialmedia',
+        'full_name', 'email', 'password', 'academy', 'socialmedia', 'image'
     ];
 
-    // علاقات Eloquent مع الموديلات الأخرى
+    protected $hidden = [
+        'password', 'remember_token',
+    ];
 
-    /**
-     * علاقة مع نموذج Post (البوستات)
-     * 
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function posts()
-    {
-        return $this->hasMany(Post::class);
-    }
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+    ];
 
-    /**
-     * علاقة مع نموذج Comment (التعليقات)
-     * 
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
+  // موديل User
+public function posts()
+{
+    return $this->hasMany(Post::class);
+}
+
+
     public function comments()
     {
         return $this->hasMany(Comment::class);
     }
 
-    /**
-     * علاقة مع نموذج Like (الإعجابات)
-     * 
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
     public function likes()
     {
         return $this->hasMany(Like::class);
-    }
-
-    /**
-     * علاقة مع نموذج SavedPost (البوستات المحفوظة)
-     * 
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function savedPosts()
-    {
-        return $this->hasMany(SavedPost::class);
-    }
-
-    /**
-     * علاقة مع نموذج PersonalAccessToken (التوكنات الشخصية)
-     * 
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function personalAccessTokens()
-    {
-        return $this->hasMany(PersonalAccessToken::class);
     }
 }

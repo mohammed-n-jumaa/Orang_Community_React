@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify"; // Import toast
+import "react-toastify/dist/ReactToastify.css"; // Import styles for Toastify
 import "./register.scss";
 
 const Register = () => {
@@ -63,7 +65,8 @@ const Register = () => {
         academy,
       });
 
-      alert("Registration successful!");
+      // Show success toast
+      toast.success("Registration successful!");
       window.location.href = "/login";
     } catch (error) {
       if (error.response && error.response.data) {
@@ -71,9 +74,17 @@ const Register = () => {
       } else {
         setError("An unexpected error occurred.");
       }
+
+      // Show error toast
+      toast.error(error.response?.data?.message || "An unexpected error occurred.");
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleButtonClick = () => {
+    // Show the toast when the "Register" button is clicked
+    toast.info("Account has been created");
   };
 
   return (
@@ -153,7 +164,11 @@ const Register = () => {
               <option value="Balqa">Balqa</option>
             </select>
 
-            <button type="submit" disabled={isLoading}>
+            <button
+              type="submit"
+              disabled={isLoading}
+              onClick={handleButtonClick} // Trigger toast on button click
+            >
               {isLoading ? "Registering..." : "Register"}
             </button>
           </form>

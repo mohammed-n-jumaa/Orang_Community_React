@@ -8,8 +8,11 @@ import BookmarkBorderOutlinedIcon from "@mui/icons-material/BookmarkBorderOutlin
 import BookmarkOutlinedIcon from "@mui/icons-material/BookmarkOutlined";
 import { Link, useNavigate } from "react-router-dom";
 import Comments from "../comments/Comments";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { formatDistanceToNow } from "date-fns";
+import axios from "axios";
+import { PiOrangeFill } from "react-icons/pi";
+import { PiOrange } from "react-icons/pi";
 
 const Post = ({ post, showFullComments = false }) => {
   const navigate = useNavigate();
@@ -17,18 +20,112 @@ const Post = ({ post, showFullComments = false }) => {
   const [showMoreImages, setShowMoreImages] = useState(false);
   const [comments, setComments] = useState(post.comments || []);
 
-  // Determine if post is liked (mock for now)
-  const liked = false;
+  const createdAt = new Date(post.created_at);
+  const timeAgo = isNaN(createdAt.getTime())
+    ? "Invalid date"
+    : formatDistanceToNow(createdAt, { addSuffix: true });
 
-  // Calculate time ago for the post's creation date
-  const timeAgo = formatDistanceToNow(new Date(post.created_at), {
-    addSuffix: true,
-  });
+  const [Liked, setLiked] = useState(post.isLiked || false);
+  const [likesCount, setLikesCount] = useState(post.likes?.length || 0);
 
-  // Determine which comments to display
+  const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+
+  useEffect(() => {
+    const checkLikeStatus = async () => {
+      try {
+        // Make sure currentUser exists before using it
+        if (currentUser?.id) {
+          const response = await axios.get(
+            `http://127.0.0.1:8000/api/check-like/${post.id}`, 
+            { params: { user_id: currentUser.id } } // Pass user_id as query parameter
+          );
+          setLiked(response.data.isLiked); // Update like status
+        }
+      } catch (error) {
+        console.error("Error checking like status:", error);
+      }
+    };
+  
+    // Trigger the check when post ID or currentUser ID changes
+    if (currentUser?.id) {
+      checkLikeStatus();
+    }
+  }, [post.id, currentUser?.id]);
+  
+
+  const handleLike = async () => {
+    try {
+      setLiked(!Liked);
+      setLikesCount((currentCount) => (Liked ? currentCount - 1 : currentCount + 1));
+  
+      // Get user ID from localStorage
+      const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+  
+      // Ensure that currentUser is available before making the API call
+      if (currentUser?.id) {
+        const response = await axios.post(
+          `http://127.0.0.1:8000/api/like/${post.id}/${currentUser.id}`
+        );
+  
+        const { isLiked, likesCount } = response.data;
+        setLiked(isLiked);
+        setLikesCount(likesCount);
+      } else {
+        console.error('User is not logged in');
+      }
+    } catch (error) {
+      console.error('Error liking the post:', error);
+      setLiked(Liked);
+      setLikesCount(post.likes?.length || 0);
+    }
+  };
+  
+
+  const [isSaved, setIsSaved] = useState(false);
+
+  useEffect(() => {
+    const checkSavedStatus = async () => {
+      try {
+        // Ensure currentUser exists
+        if (currentUser?.id) {
+          const response = await axios.get(`http://127.0.0.1:8000/api/check-saved/${post.id}`, {
+            params: { user_id: currentUser?.id }
+          });
+          setIsSaved(response.data.isSaved);
+        }
+      } catch (error) {
+        console.error("Error checking saved status:", error);
+      }
+    };
+
+    // Check saved status if user is logged in
+    if (currentUser?.id) {
+      checkSavedStatus();
+    }
+  }, [post.id, currentUser?.id]);
+
+  const handleSave = async () => {
+    try {
+      // Update saved status in UI first
+      setIsSaved(!isSaved);
+      
+      // Make API call to save/unsave the post
+      const response = await axios.post(
+        `http://127.0.0.1:8000/api/save/${post.id}/${currentUser?.id}`
+      );
+      if (response.data.status === "saved") {
+        setIsSaved(true);
+      } else if (response.data.status === "unsaved") {
+        setIsSaved(false);
+      }
+    } catch (error) {
+      console.error("Error saving/unsaving post:", error);
+      setIsSaved(isSaved); // Rollback on error
+    }
+  };
+
   const displayComments = showFullComments ? comments : comments.slice(0, 0);
 
-  // Navigate to detailed post view
   const handleShowMoreComments = () => {
     navigate(`/post/${post.id}`);
   };
@@ -36,7 +133,6 @@ const Post = ({ post, showFullComments = false }) => {
   return (
     <div className="post">
       <div className="container">
-        {/* User Information */}
         <div className="user">
           <div className="userInfo">
             <img
@@ -56,16 +152,14 @@ const Post = ({ post, showFullComments = false }) => {
           <MoreHorizIcon />
         </div>
 
-        {/* Post Content */}
         <div className="content">
           <p>{post.content}</p>
 
-          {/* Post Images */}
           {post.post_images?.length > 0 && (
             <div className="post-images">
               <img
                 src={post.post_images[0]?.image_url}
-                alt={`Post Image 1`}
+                alt={post.post_images[0]?.description}
                 className="post-image"
               />
               {showMoreImages &&
@@ -73,7 +167,7 @@ const Post = ({ post, showFullComments = false }) => {
                   <img
                     key={index}
                     src={image.image_url}
-                    alt={`Post Image ${index + 2}`}
+                    alt={image.description}
                     className="post-image"
                   />
                 ))}
@@ -89,23 +183,25 @@ const Post = ({ post, showFullComments = false }) => {
           )}
         </div>
 
-        {/* Post Interaction Info */}
         <div className="info">
-          <div className="item">
-            {liked ? <FavoriteOutlinedIcon /> : <FavoriteBorderOutlinedIcon />}
-            {post.likes?.length || 0} Likes
+          <div className="item" onClick={handleLike}>
+            {Liked ? (
+              <PiOrangeFill style={{ color: "#ff7f00", fontSize: "30px" }} />
+            ) : (
+              <PiOrange style={{ fontSize: "30px" }} />
+            )}
+            {likesCount} Likes
           </div>
           <div className="item" onClick={() => setCommentOpen(!commentOpen)}>
             <TextsmsOutlinedIcon />
             {comments.length} Comments
           </div>
-          <div className="item">
-            <BookmarkBorderOutlinedIcon />
-            Save
+          <div className="item" onClick={handleSave}>
+            {isSaved ? <BookmarkOutlinedIcon /> : <BookmarkBorderOutlinedIcon />}
+            {isSaved ? "Saved" : "Save"}
           </div>
         </div>
 
-        {/* Comments Section */}
         {(commentOpen || showFullComments) && (
           <>
             <Comments
