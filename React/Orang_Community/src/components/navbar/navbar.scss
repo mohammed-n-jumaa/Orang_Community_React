@@ -34,7 +34,7 @@
 // }
       // Search Section
       .search {
-        display: flex;
+        display: flex; 
         align-items: center;
         gap: 30px;
         border: 1px solid themed("border");
@@ -64,7 +64,7 @@
         .search-results {
           position: absolute;
           top: 100%; // Positions the results directly below the search input
-          left: 0; // Aligns with the left edge of the search container
+          left: 10px; // Aligns with the left edge of the search container
           background: white;
           border: 1px solid #ccc;
           border-radius: 5px;

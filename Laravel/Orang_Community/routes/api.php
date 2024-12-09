@@ -26,7 +26,7 @@ Route::group([
     Route::get("activities", [ActController::class, 'getActivities']);
     Route::get('logout' , [ApiController::class , 'logout']);
 
-    
+
 
 });
 
