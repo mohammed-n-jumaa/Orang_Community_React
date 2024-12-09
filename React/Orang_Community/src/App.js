@@ -42,12 +42,18 @@ const Layout = () => {
 
 // ProtectedRoute component to protect routes that need authentication
 const ProtectedRoute = ({ children }) => {
-  const { currentUser } = useContext(AuthContext);
+  const { currentUser, loading } = useContext(AuthContext); // Add loading from AuthContext
+
+  if (loading) {
+    // Show a loading spinner or placeholder during initialization
+    return <div>Loading...</div>; // Placeholder while authentication initializes
+  }
 
   if (!currentUser) {
-    return <Navigate to="/login" />;
+    return <Navigate to="/login" />; // Redirect to login if no user is authenticated
   }
-  return children;
+
+  return children; // Render children if authenticated
 };
 
 function App() {

@@ -5,6 +5,8 @@ import { FaEnvelope, FaSchool, FaLinkedin } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
+import Image from "../../assets/Orange.jfif"; // Default image
+import Swal from 'sweetalert2';
 
 const Profile = () => {
   const [user, setUser] = useState(null);
@@ -19,6 +21,8 @@ const Profile = () => {
     image: null,
   });
   const [posts, setPosts] = useState([]); // Store filtered posts
+  const [activePostId, setActivePostId] = useState(null); // For managing active post menu
+  const [isDeleting, setIsDeleting] = useState(false); // For managing delete action state
   const navigate = useNavigate();
 
   // Fetch user profile
@@ -150,6 +154,51 @@ const Profile = () => {
     return `${days} days ago`;
   };
 
+// Handle force delete post (حذف دائم)
+const handleForceDeletePost = async (postId) => {
+
+  const result = await Swal.fire({
+    title: ' Are You Sure ',
+    text: "This post will be deleted.",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Yes , Delete',
+    cancelButtonText: 'Cancle',
+    reverseButtons: true
+  });
+
+  if (result.isConfirmed) {
+    setIsDeleting(true);
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete(`/posts/${postId}/force-delete`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setPosts(posts.filter((post) => post.id !== postId)); 
+      Swal.fire('Deleted!', 'Post deleted successfully', 'success');
+    } catch (error) {
+      Swal.fire('mistake!','Failed to delete post', 'error');
+    } finally {
+      setIsDeleting(false);
+      setActivePostId(null); 
+    }
+  } else {
+    Swal.fire('Canceled', 'The post has not been deleted', 'info');
+  }
+};
+
+
+  // Toggle post menu visibility
+  const handleTogglePostMenu = (postId) => {
+    if (activePostId === postId) {
+      setActivePostId(null);  // Close the menu if clicked again on the same post
+    } else {
+      setActivePostId(postId);  // Open the menu for the clicked post
+    }
+  };
+
   return (
     <div className="profile">
       <ToastContainer
@@ -166,7 +215,7 @@ const Profile = () => {
 
       <div className="images">
         <img
-          src="https://images.pexels.com/photos/13440765/pexels-photo-13440765.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+          src={Image}
           alt="cover"
           className="cover"
         />
@@ -266,48 +315,54 @@ const Profile = () => {
           </div>
         )}
 
-        <div className="userPosts">
-          {posts.length > 0 ? (
-            posts.map((post) => (
-              <div key={post.id} className="post">
-                <div className="container">
-                  <div className="user">
-                    <div className="userInfo">
-                      <img
-                        src={post.user.profile_image_url || "https://via.placeholder.com/40"}
-                        alt="user"
-                      />
-                      <div className="details">
-                        <span className="name">{post.user.full_name}</span>
-                        <span className="date">{formatTime(post.created_at)}</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="content">
-                    <p>{post.content}</p>
-                    {post.post_images.map((image) => (
-                      <img
-                        key={image.id}
-                        src={image.image_url}
-                        alt="post"
-                        className="postImage"
-                      />
-                    ))}
-                  </div>
-                  <div className="actions">
-                    <span className="like">Likes: {post.likes_count}</span>
-                    <span className="">Comments: {post.comments_count}</span>
-                  </div>
-                </div>
+<div className="userPosts">
+  {posts.length > 0 ? (
+    posts.map((post) => (
+      <div key={post.id} className="post">
+        <div className="container">
+          <div className="user">
+            <div className="userInfo">
+              <img
+                src={post.user.profile_image_url || "https://via.placeholder.com/40"}
+                alt="user"
+              />
+              <div className="details">
+                <span className="name">{post.user.full_name}</span>
+                <span className="date">{formatTime(post.created_at)}</span>
               </div>
-            ))
-          ) : (
-            <p>No posts available</p>
-          )}
+            </div>
+            <div className="moreOptions" onClick={() => handleTogglePostMenu(post.id)}>
+              &#8226;&#8226;&#8226;
+            </div>
+            {activePostId === post.id && (
+              <div className="moreOptionsMenu active">
+                <button onClick={() => handleForceDeletePost(post.id)} disabled={isDeleting}>
+                  {isDeleting ? "delete..." : "Delete"}
+                </button>
+              </div>
+            )}
+          </div>
+          <div className="content">
+            <p>{post.content}</p>
+            {post.post_images.map((image) => (
+              <img key={image.id} src={image.image_url} alt="post" className="postImage" />
+            ))}
+          </div>
+          <div className="actions">
+            <span className="like">Likes {post.likes_count}</span>
+            <span className="">Comments {post.comments_count}</span>
+          </div>
         </div>
+      </div>
+    ))
+  ) : (
+    <p>No posts Yet!</p>
+  )}
+</div>
+
       </div>
     </div>
   );
 };
 
-export default Profile;
+export default Profile;  

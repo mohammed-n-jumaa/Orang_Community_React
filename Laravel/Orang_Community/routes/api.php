@@ -25,18 +25,20 @@ Route::group([
     Route::get('/nav/user-details', [NavController::class, 'getUserDetails']);
     Route::get("activities", [ActController::class, 'getActivities']);
     Route::get('logout' , [ApiController::class , 'logout']);
+    Route::delete('/posts/{postId}/force-delete', [ProfileController::class, 'forceDeletePost'])->middleware('auth:sanctum');
 
     
 
 });
 
-Route::post('/like/{id}', [LikeController::class, 'like']);
+// routes/api.php
+Route::post('/like/{post_id}/{user_id}', [LikeController::class, 'like']);
 Route::get('/display/{user_id}', [LikeController::class, 'display']);
 Route::get('/check-like/{id}', [LikeController::class, 'checkLike']);
 
-Route::post('/save/{id}', [SavedController::class, 'saved']);
-Route::get('/show/{user_id}', [SavedController::class, 'show']);
-Route::get('/check-saved/{id}', [SavedController::class, 'checkSavedStatus']);
+Route::post('/save/{post_id}/{user_id}', [SavedController::class, 'save']);
+Route::get('/display-saved/{user_id}', [SavedController::class, 'displaySaved']);
+Route::get('/check-saved/{post_id}', [SavedController::class, 'checkSavedStatus']);
 
 
 

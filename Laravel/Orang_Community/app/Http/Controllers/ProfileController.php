@@ -2,10 +2,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
+use App\Models\Post;
 
 class ProfileController extends Controller
 {
@@ -15,14 +15,12 @@ class ProfileController extends Controller
         try {
             $user = $request->user();
             
-            // جلب البوستات الخاصة باليوزر فقط
             $posts = $user->posts()->whereNull('deleted_at')->get();
     
-            // إضافة التعليقات واللايكات لكل بوست
+
             foreach ($posts as $post) {
-                $post->comments = $post->comments; // جلب التعليقات
-                $post->likes_count = $post->likes()->count(); // جلب عدد اللايكات
-                $post->time_ago = $this->timeElapsed($post->created_at); // الوقت المنقضي منذ نشر البوست
+                $post->likes_count = $post->likes()->count(); 
+                $post->time_ago = $this->timeElapsed($post->created_at); 
             }
     
             return response()->json([
@@ -32,7 +30,7 @@ class ProfileController extends Controller
                 'academy' => $user->academy,
                 'socialmedia' => $user->socialmedia,
                 'profile_picture' => $user->image ? url('uploads/profile/' . $user->image) : null,
-                'posts' => $posts // إضافة البوستات مع التفاصيل
+                'posts' => $posts 
             ]);
         } catch (\Exception $e) {
             Log::error('Profile Show Error: ' . $e->getMessage());
@@ -43,7 +41,6 @@ class ProfileController extends Controller
         }
     }
     
-    // دالة لحساب الوقت المنقضي منذ نشر البوست
     private function timeElapsed($timestamp)
     {
         $time_ago = strtotime($timestamp);
@@ -149,6 +146,24 @@ class ProfileController extends Controller
                 'message' => 'An error occurred while updating profile',
                 'error' => $e->getMessage()
             ], 500);
+        }
+        
+    }
+    public function forceDeletePost($postId)
+    {
+        try {
+            $post = Post::findOrFail($postId);
+
+            if ($post->user_id !== auth()->user()->id) {
+                return response()->json(['message' => 'Unauthorized'], 403);
+            }
+
+            $post->forceDelete();
+
+            return response()->json(['message' => 'Post deleted permanently'], 200);
+        } catch (\Exception $e) {
+            // التعامل مع الأخطاء
+            return response()->json(['message' => 'Failed to delete post', 'error' => $e->getMessage()], 500);
         }
     }
 }

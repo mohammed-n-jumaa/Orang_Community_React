@@ -14,7 +14,6 @@ import axios from "axios";
 import { PiOrangeFill } from "react-icons/pi";
 import { PiOrange } from "react-icons/pi";
 
-
 const Post = ({ post, showFullComments = false }) => {
   const navigate = useNavigate();
   const [commentOpen, setCommentOpen] = useState(showFullComments);
@@ -29,53 +28,91 @@ const Post = ({ post, showFullComments = false }) => {
   const [Liked, setLiked] = useState(post.isLiked || false);
   const [likesCount, setLikesCount] = useState(post.likes?.length || 0);
 
+  const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+
   useEffect(() => {
     const checkLikeStatus = async () => {
       try {
-        const response = await axios.get(`http://127.0.0.1:8000/api/check-like/${post.id}`);
-        setLiked(response.data.isLiked);
+        // Make sure currentUser exists before using it
+        if (currentUser?.id) {
+          const response = await axios.get(
+            `http://127.0.0.1:8000/api/check-like/${post.id}`, 
+            { params: { user_id: currentUser.id } } // Pass user_id as query parameter
+          );
+          setLiked(response.data.isLiked); // Update like status
+        }
       } catch (error) {
         console.error("Error checking like status:", error);
       }
     };
-
-    checkLikeStatus();
-  }, [post.id]);
+  
+    // Trigger the check when post ID or currentUser ID changes
+    if (currentUser?.id) {
+      checkLikeStatus();
+    }
+  }, [post.id, currentUser?.id]);
+  
 
   const handleLike = async () => {
     try {
       setLiked(!Liked);
       setLikesCount((currentCount) => (Liked ? currentCount - 1 : currentCount + 1));
-      const response = await axios.post(`http://127.0.0.1:8000/api/like/${post.id}`);
-      const { isLiked, likesCount } = response.data;
-      setLiked(isLiked);
-      setLikesCount(likesCount);
+  
+      // Get user ID from localStorage
+      const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+  
+      // Ensure that currentUser is available before making the API call
+      if (currentUser?.id) {
+        const response = await axios.post(
+          `http://127.0.0.1:8000/api/like/${post.id}/${currentUser.id}`
+        );
+  
+        const { isLiked, likesCount } = response.data;
+        setLiked(isLiked);
+        setLikesCount(likesCount);
+      } else {
+        console.error('User is not logged in');
+      }
     } catch (error) {
-      console.error("Error liking the post:", error);
+      console.error('Error liking the post:', error);
       setLiked(Liked);
       setLikesCount(post.likes?.length || 0);
     }
   };
+  
 
   const [isSaved, setIsSaved] = useState(false);
 
   useEffect(() => {
     const checkSavedStatus = async () => {
       try {
-        const response = await axios.get(`http://127.0.0.1:8000/api/check-saved/${post.id}`);
-        setIsSaved(response.data.isSaved);
+        // Ensure currentUser exists
+        if (currentUser?.id) {
+          const response = await axios.get(`http://127.0.0.1:8000/api/check-saved/${post.id}`, {
+            params: { user_id: currentUser?.id }
+          });
+          setIsSaved(response.data.isSaved);
+        }
       } catch (error) {
         console.error("Error checking saved status:", error);
       }
     };
 
-    checkSavedStatus();
-  }, [post.id]);
+    // Check saved status if user is logged in
+    if (currentUser?.id) {
+      checkSavedStatus();
+    }
+  }, [post.id, currentUser?.id]);
 
   const handleSave = async () => {
     try {
+      // Update saved status in UI first
       setIsSaved(!isSaved);
-      const response = await axios.post(`http://127.0.0.1:8000/api/save/${post.id}`);
+      
+      // Make API call to save/unsave the post
+      const response = await axios.post(
+        `http://127.0.0.1:8000/api/save/${post.id}/${currentUser?.id}`
+      );
       if (response.data.status === "saved") {
         setIsSaved(true);
       } else if (response.data.status === "unsaved") {
@@ -83,7 +120,7 @@ const Post = ({ post, showFullComments = false }) => {
       }
     } catch (error) {
       console.error("Error saving/unsaving post:", error);
-      setIsSaved(isSaved);
+      setIsSaved(isSaved); // Rollback on error
     }
   };
 
@@ -119,31 +156,31 @@ const Post = ({ post, showFullComments = false }) => {
           <p>{post.content}</p>
 
           {post.post_images?.length > 0 && (
-  <div className="post-images">
-    <img
-      src={post.post_images[0]?.image_url}
-      alt={post.post_images[0]?.description  }
-      className="post-image"
-    />
-    {showMoreImages &&
-      post.post_images.slice(1).map((image, index) => (
-        <img
-          key={index}
-          src={image.image_url}
-          alt={image.description  }
-          className="post-image"
-        />
-      ))}
-    {post.post_images.length > 1 && (
-      <button
-        className="show-more-btn"
-        onClick={() => setShowMoreImages(!showMoreImages)}
-      >
-        {showMoreImages ? "Show Less" : "+ Show More"}
-      </button>
-    )}
-  </div>
-)}
+            <div className="post-images">
+              <img
+                src={post.post_images[0]?.image_url}
+                alt={post.post_images[0]?.description}
+                className="post-image"
+              />
+              {showMoreImages &&
+                post.post_images.slice(1).map((image, index) => (
+                  <img
+                    key={index}
+                    src={image.image_url}
+                    alt={image.description}
+                    className="post-image"
+                  />
+                ))}
+              {post.post_images.length > 1 && (
+                <button
+                  className="show-more-btn"
+                  onClick={() => setShowMoreImages(!showMoreImages)}
+                >
+                  {showMoreImages ? "Show Less" : "+ Show More"}
+                </button>
+              )}
+            </div>
+          )}
         </div>
 
         <div className="info">

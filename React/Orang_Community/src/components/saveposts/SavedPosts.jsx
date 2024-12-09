@@ -11,7 +11,9 @@ const SavedPosts = () => {
   useEffect(() => {
     const fetchSavedPosts = async () => {
       try {
-        const res = await axios.get("http://127.0.0.1:8000/api/show/3");
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        
+        const res = await axios.get(`http://127.0.0.1:8000/api/display-saved/${currentUser.id}`);
         
         if (res.data.data) {
           // Remove duplicates using Set based on post_id
@@ -23,14 +25,13 @@ const SavedPosts = () => {
   
           const transformedPosts = uniquePosts.map(savedPost => ({
             ...savedPost,
-            id: savedPost.post_id,
+            id: savedPost.post_id,  // Ensure you map post_id to id
             content: savedPost.post_content,
             user: savedPost.post_user,
             comments: savedPost.post_comments,
             post_images: savedPost.post_images,
             isSaved: true,
             likes: savedPost.likes, // Include likes in the transformed post
-
           }));
   
           setSavedPosts(transformedPosts);
@@ -64,7 +65,7 @@ const SavedPosts = () => {
         ) : (
           savedPosts.map((post) => (
             <Post 
-              key={`saved-post-${post.like_id}`} 
+              key={`saved-post-${post.id}`} // Use post.id here for key prop
               post={post} 
             />
           ))
