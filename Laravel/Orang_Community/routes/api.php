@@ -27,7 +27,7 @@ Route::group([
     Route::get('logout' , [ApiController::class , 'logout']);
     Route::delete('/posts/{postId}/force-delete', [ProfileController::class, 'forceDeletePost'])->middleware('auth:sanctum');
 
-    
+
 
 });
 

@@ -1,12 +1,15 @@
-import "./profile.scss";
 import React, { useState, useEffect } from "react";
 import axios from "../../api/axios";
-import { FaEnvelope, FaSchool, FaLinkedin } from "react-icons/fa";
+import { FaEnvelope, FaLinkedin } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
 import Image from "../../assets/Orange.jfif"; // Default image
 import Swal from 'sweetalert2';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faLocationDot } from "@fortawesome/free-solid-svg-icons";
+import "./profile.scss";
+import { faPenToSquare, faTimes } from '@fortawesome/free-solid-svg-icons';
 
 const Profile = () => {
   const [user, setUser] = useState(null);
@@ -57,7 +60,7 @@ const Profile = () => {
     fetchProfile();
   }, [navigate]);
 
-  // Fetch posts filtered by user
+  // Fetch user posts
   useEffect(() => {
     const fetchPosts = async () => {
       try {
@@ -73,9 +76,7 @@ const Profile = () => {
       }
     };
 
-    if (user) {
-      fetchPosts();
-    }
+    if (user) fetchPosts();
   }, [user]);
 
   // Loading state
@@ -109,7 +110,7 @@ const Profile = () => {
     const formDataToSend = new FormData();
 
     for (let key in formData) {
-      if (formData[key] !== null && formData[key] !== undefined) {
+      if (formData[key]) {
         formDataToSend.append(key, formData[key]);
       }
     }
@@ -142,11 +143,16 @@ const Profile = () => {
     }
   };
 
+  // Close the modal without submitting
+  const handleClose = () => {
+    setIsEditing(false);
+  };
+
   // Format time function
   const formatTime = (time) => {
     const now = new Date();
     const createdAt = new Date(time);
-    const difference = Math.floor((now - createdAt) / (1000 * 60)); // in minutes
+    const difference = Math.floor((now - createdAt) / (1000 * 60));
     if (difference < 60) return `${difference} minutes ago`;
     const hours = Math.floor(difference / 60);
     if (hours < 24) return `${hours} hours ago`;
@@ -200,7 +206,7 @@ const handleForceDeletePost = async (postId) => {
   };
 
   return (
-    <div className="profile">
+    <div className="user-dashboard">
       <ToastContainer
         position="top-center"
         autoClose={3000}
@@ -213,52 +219,55 @@ const handleForceDeletePost = async (postId) => {
         pauseOnHover
       />
 
-      <div className="images">
-        <img
-          src={Image}
-          alt="cover"
-          className="cover"
+      <div className="media-container">
+        <img src={Image} alt="cover" className="cover-image" />
+        <img 
+          src={user?.profile_picture || "https://via.placeholder.com/150"} 
+          alt="profile" 
+          className="avatar" 
         />
-        <div className="profilePicWrapper">
-          <img
-            src={user?.profile_picture || "https://via.placeholder.com/150"}
-            alt="profile"
-            className="profilePic"
-          />
-        </div>
       </div>
 
-      <div className="profileContainer">
-        <div className="uInfo">
-          <div className="center">
-            <span className="userName">{user?.full_name}</span>
-            <div className="info">
-              <div
-                className="infoItem"
-                onClick={() => (window.location.href = `mailto:${user?.email}`)}
-              >
-                <FaEnvelope className="icon" />
+      <div className="user-container">
+        <div className="user-overview">
+          <div className="action-section">
+            <button className="edit-button" onClick={handleEditToggle}>
+              <FontAwesomeIcon icon={isEditing ? faTimes : faPenToSquare} />
+            </button>
+          </div>
+
+          <div className="user-details">
+            <span>{user?.full_name}</span>
+            
+            <div className="user-stats">
+              <div className="stat-item">
+                <FaEnvelope />
+                <span>Contact</span>
+                <span className="hover-text">Send E-mail</span>
               </div>
-              <div className="infoItem">
-                <FaSchool className="icon" />
+              
+              <div className="stat-item">
+                <FontAwesomeIcon icon={faLocationDot} />
                 <span>{user?.academy}</span>
+                <span className="hover-text">Academy Location</span>
               </div>
-              <div
-                className="infoItem"
+              
+              <div 
+                className="stat-item" 
                 onClick={() => window.open(user?.socialmedia, "_blank")}
               >
-                <FaLinkedin className="icon" />
+                <FaLinkedin />
+                <span>LinkedIn</span>
+                <span className="hover-text">Visit LinkedIn</span>
               </div>
             </div>
-            <button className="editButton" onClick={handleEditToggle}>
-              {isEditing ? "Cancel" : "Edit Profile"}
-            </button>
           </div>
         </div>
 
         {isEditing && (
           <div className="modal">
-            <form onSubmit={handleSubmit} className="editForm">
+            <form onSubmit={handleSubmit} className="edit-form">
+              <label htmlFor="full_name">Full Name</label>
               <input
                 type="text"
                 name="full_name"
@@ -267,6 +276,8 @@ const handleForceDeletePost = async (postId) => {
                 placeholder="Full Name"
                 required
               />
+
+              <label htmlFor="email">Email</label>
               <input
                 type="email"
                 name="email"
@@ -275,6 +286,8 @@ const handleForceDeletePost = async (postId) => {
                 placeholder="Email"
                 required
               />
+
+              <label htmlFor="academy">Academy</label>
               <select
                 name="academy"
                 value={formData.academy}
@@ -288,6 +301,8 @@ const handleForceDeletePost = async (postId) => {
                 <option value="Aqaba">Aqaba</option>
                 <option value="Balqa">Balqa</option>
               </select>
+
+              <label htmlFor="socialmedia">LinkedIn URL</label>
               <input
                 type="text"
                 name="socialmedia"
@@ -295,6 +310,8 @@ const handleForceDeletePost = async (postId) => {
                 onChange={handleChange}
                 placeholder="Social Media"
               />
+
+              <label htmlFor="password">Password</label>
               <input
                 type="password"
                 name="password"
@@ -302,15 +319,22 @@ const handleForceDeletePost = async (postId) => {
                 onChange={handleChange}
                 placeholder="Password"
               />
-              <input
-                type="file"
-                name="image"
-                onChange={handleImageChange}
-                placeholder="Profile Image"
-              />
-              <button type="submit" className="submitButton">
-                Save
-              </button>
+
+              <label htmlFor="image">Profile Image</label>
+              <input type="file" name="image" onChange={handleImageChange} />
+
+              <div className="button-container">
+                <button type="submit" className="submit-button save">
+                  Save
+                </button>
+                <button 
+                  type="button" 
+                  className="submit-button close" 
+                  onClick={handleClose}
+                >
+                  Close
+                </button>
+              </div>
             </form>
           </div>
         )}

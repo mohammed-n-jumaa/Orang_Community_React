@@ -1,34 +1,37 @@
 @import "../../style.scss";
 
-.profile {
+.user-dashboard {
   @include themify($themes) {
     background-color: themed("bgSoft");
 
-    .images {
+    .media-container {
       width: 100%;
       height: 300px;
       position: relative;
 
-      .cover {
+      .cover-image {
         width: 100%;
         height: 100%;
         object-fit: cover;
       }
 
-      .profilePic {
-        width: 200px;
-        height: 200px;
+      .avatar {
+        width: 180px;
+        height: 180px;
         border-radius: 50%;
+        border: 3px solid #ff7900;
         object-fit: cover;
         position: absolute;
         left: 0;
         right: 0;
         margin: auto;
-        top: 180px; /* تقليل المسافة العلوية لتوفير مساحة أكبر للاسم */
+        box-shadow: 6px 3px 25px -10px rgba(0, 0, 0, 0.38);
+
+        top: 190px; /* تقليل المسافة العلوية لتوفير مساحة أكبر للاسم */
       }
     }
 
-    .profileContainer {
+    .user-container {
       padding: 20px 40px; /* تقليل البادينغ قليلاً لتحسين التناسق بين العناصر */
 
       @include mobile {
@@ -39,8 +42,8 @@
         padding: 15px;
       }
 
-      .uInfo {
-        height: 180px;
+      .user-overview {
+        height: 100px;
         -webkit-box-shadow: 0px 0px 25px -10px rgba(0, 0, 0, 0.38);
         -moz-box-shadow: 0px 0px 25px -10px rgba(0, 0, 0, 0.38);
         box-shadow: 0px 0px 25px -10px rgba(0, 0, 0, 0.38);
@@ -48,7 +51,7 @@
         background-color: themed("bg");
         color: themed("textColor");
         padding: 40px;
-        display: flex;
+        padding-bottom: 65px;
         align-items: center;
         justify-content: space-between;
         margin-bottom: 20px;
@@ -60,7 +63,7 @@
           margin-top: 100px;
         }
 
-        .left {
+        .contact-section {
           flex: 1;
           display: flex;
           gap: 15px;
@@ -80,7 +83,7 @@
           }
         }
 
-        .center {
+        .user-details {
           flex: 2;
           display: flex;
           flex-direction: column;
@@ -92,20 +95,23 @@
             font-size: 24px; /* تصغير حجم اسم المستخدم ليكون أكثر توازناً */
             font-weight: 600;
             color: themed("textColor");
+            margin-left: 20px;
           }
 
-          .info {
+          .user-stats {
             width: 100%;
             display: flex;
             align-items: center;
             justify-content: space-around;
+            margin-top: 20px;
+            cursor: pointer;
 
-            .item {
+            .stat-item {
               display: flex;
               align-items: center;
               gap: 8px;
               color: themed("textColorSoft");
-
+              
               span {
                 font-size: 14px;
               }
@@ -121,7 +127,6 @@
             cursor: pointer;
             font-size: 16px;
             font-weight: bold;
-            transition: background-color 0.3s ease;
 
             &:hover {
               background-color: #3a56e0;
@@ -129,14 +134,14 @@
           }
         }
 
-        .right {
+        .action-section {
           flex: 1;
           display: flex;
           align-items: center;
           justify-content: flex-end;
           gap: 15px;
 
-          .icon {
+          .social-icon {
             font-size: 2rem;
             color: themed("textColorSoft");
             cursor: pointer;
@@ -148,193 +153,279 @@
           }
         }
       }
-    }
 
-    /* تصميم البوستات */
-    .userPosts {
-      display: flex;
-      flex-direction: column;
-      gap: 20px; /* إضافة مسافة بين البوستات */
-    }
-    .actions{
-      display: flex;
-      flex-direction: row;
-      gap: 450px;
-    }
-
-    .post {
-      background-color: themed("bg");
-      border-radius: 10px;
-      padding: 20px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      margin-bottom: 20px;
-      border: 1px solid #ddd; /* إضافة حدود خفيفة حول البوستات */
-
-      .container {
+      .user-publications {
         display: flex;
         flex-direction: column;
+        gap: 20px; 
       }
 
-      .user {
+      .publication-actions {
         display: flex;
-        gap: 15px;
+        flex-direction: row;
+        gap: 450px;
+      }
 
-        .userInfo {
-          display: flex;
-          align-items: center;
-        }
+      .user-post {
+        background-color: themed("bg");
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+        border: 1px solid #ddd; 
 
-        img {
-          width: 40px;
-          height: 40px;
-          border-radius: 50%;
-        }
-
-        .details {
+        .post-container {
           display: flex;
           flex-direction: column;
         }
-      }
 
-      .content {
-        margin-top: 15px;
-
-        img {
-          width: 100%;
-          margin-top: 10px;
-          border-radius: 5px;
-        }
-      }
-
-      .info {
-        display: flex;
-        justify-content: space-between;
-        margin-top: 15px;
-
-        .item {
-          font-size: 14px;
-          color: themed("textColorSoft");
-        }
-      }
-
-      .comments {
-        margin-top: 20px;
-        border-top: 1px solid #ddd; /* إضافة حدود بين البوست والتعليقات */
-
-        .comment {
+        .user-info {
           display: flex;
           gap: 15px;
-          margin-top: 15px;
 
-          .commentUser {
+          .user-profile {
             display: flex;
-            gap: 10px;
-
-            img {
-              width: 30px;
-              height: 30px;
-              border-radius: 50%;
-            }
-
-            .commentDetails {
-              display: flex;
-              flex-direction: column;
-              justify-content: center;
-            }
+            align-items: center;
           }
 
-          .commentContent {
-            margin-top: 5px;
+          img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+          }
+
+          .user-details {
+            display: flex;
+            flex-direction: column;
+          }
+        }
+
+        .post-content {
+          margin-top: 15px;
+
+          img {
+            width: 100%;
+            margin-top: 10px;
+            border-radius: 5px;
+          }
+        }
+
+        .post-info {
+          display: flex;
+          justify-content: space-between;
+          margin-top: 15px;
+
+          .item {
             font-size: 14px;
             color: themed("textColorSoft");
           }
         }
 
-        p {
-          font-size: 14px;
-          color: themed("textColorSoft");
+        .post-comments {
+          margin-top: 20px;
+          border-top: 1px solid #ddd; 
+
+          .comment {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+
+            .comment-user {
+              display: flex;
+              gap: 10px;
+
+              img {
+                width: 30px;
+                height: 30px;
+                border-radius: 50%;
+              }
+
+              .comment-details {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+              }
+            }
+
+            .comment-content {
+              margin-top: 5px;
+              font-size: 14px;
+              color: themed("textColorSoft");
+            }
+          }
+
+          p {
+            font-size: 14px;
+            color: themed("textColorSoft");
+          }
         }
       }
-    }
 
-    .icon {
-      font-size: 2rem;
-      color: themed("textColorSoft");
-      transition: color 0.3s ease;
+      .social-icon {
+        font-size: 2rem;
+        color: themed("textColorSoft");
+        transition: color 0.3s ease;
     
-      &:hover {
-        color: themed("primary");
-      }
-    }
-
-    /* المودال كنافذة منبثقة */
-    .modal {
-      display: block;
-      background-color: rgba(0, 0, 0, 0.5);
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      z-index: 1000;
-    }
-
-    .editForm {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-      background-color: white;
-      padding: 20px;
-      margin: 50px auto;
-      width: 85%; /* تعديل العرض ليكون مناسب للشاشات الصغيرة */
-      max-width: 500px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-
-      input {
-        padding: 10px;
-        border-radius: 5px;
-        border: 1px solid #ccc;
-        margin-bottom: 15px; /* إضافة مسافة بين الحقول */
+        &:hover {
+          color: themed("primary");
+        }
       }
 
-      button {
-        padding: 12px 20px;
-        background-color: #5271ff;
-        color: white;
-        border: none;
-        cursor: pointer;
-        border-radius: 5px;
-        font-size: 16px;
+      .modal {
+        display: block;
+        background-color: rgba(0, 0, 0, 0.5);
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 1000;
+      }
+
+      .edit-form {
+        display: flex;
+        flex-direction: column;
+        background-color: white;
+        padding: 20px;
+        margin: 30px auto;
+        width: 85%;
+        max-width: 500px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
       }
     }
   }
-}
 
-.successMessage {
-  margin-top: 20px;
-  padding: 10px;
-  background-color: #4CAF50;
-  color: white;
-  text-align: center;
-  font-size: 16px;
-  border-radius: 5px;
-}
-.deleteButton {
-  background-color: red;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  cursor: pointer;
-  border-radius: 4px;
-}
+  input, select {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    margin-bottom: 15px;
+  }
+  
+  label {
+    margin-top: 10px;
+    margin-bottom: 5px;
+    font-size: small;
+  }
+  
+  button {
+    padding: 12px 20px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+    width: 48%;
+    margin: 5px 1%;
+  }
+  
+  button.submit-button.save {
+    background-color: black;
+    color: white;
+  }
+  
+  button.submit-button.close {
+    background-color: #cd3c14;
+    color: white;
+  }
+  
+  .button-container {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+  }
+  
+  .success-message {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #4CAF50;
+    color: white;
+    text-align: center;
+    font-size: 16px;
+    border-radius: 5px;
+  }
 
-.deleteButton:hover {
-  background-color: darkred;
+  .user-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+
+  .user-name-center {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #525252;
+    font-weight: bold;
+  }
+
+  .edit-section {
+    display: flex;
+    justify-content: flex-end;
+    align-items: right;
+  }
+
+  .edit-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    color: rgb(123, 123, 123);
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    height: 30px;
+    width: 30px;
+    position: relative;
+
+    &:hover {
+      background-color: #c6c6c6;
+    }
+
+    svg {
+      font-size: 18px;
+    }
+  }
+
+  .divider {
+    margin-top: 10px;
+    height: 2px;
+    background-color: #f6f3f3;
+    border: none;
+    width: 100%;
+  }
+
+  .stat-item {
+    position: relative;
+  }
+
+  .hover-text {
+    display: none;  
+    position: absolute;  
+    top: -50px;  
+    left: 0;
+    background-color: rgba(228, 228, 228, 0.8);  
+    color: #272727;  
+    padding: 5px;
+    border-radius: 3px;
+    font-size:12px;
+    opacity: 0; 
+    transition: opacity 0.3s ease;  
+  }
+
+  .stat-item:hover .hover-text {
+    display:block;  
+    opacity: 1;  
+    width: 70px;
+  }
+  
 }
 .post {
   position: relative;
-  /* تأكد من أن البوست يحتوي على محتوى واضح */
+  /* Ensure the post has clear content */
 }
 
 .moreOptions {
@@ -353,7 +444,7 @@
 .moreOptionsMenu {
   display: none;
   position: absolute;
-  top: 30px; /* المسافة بين الثلاث نقاط وزر الحذف */
+  top: 30px; /* Space between the three dots and delete button */
   right: 0;
   background-color: white;
   border: 1px solid #ccc;
@@ -367,15 +458,15 @@
 
 .moreOptionsMenu button {
   padding: 8px 15px;
-  background-color: transparent; /* إزالة الخلفية */
-  color: #f44336; /* لون النص */
-  border: 1px solid #f44336; /* تحديد الحدود بلون أحمر */
+  background-color: transparent; /* Remove background */
+  color: #f44336; /* Red text color */
+  border: 1px solid #f44336; /* Red border */
   width: 100%;
   text-align: left;
   cursor: pointer;
 }
 
 .moreOptionsMenu button:hover {
-  background-color: #f44336; /* عند التمرير على الزر */
-  color: white; /* تغيير النص إلى أبيض */
+  background-color: #f44336; /* Red background on hover */
+  color: white; /* Change text color to white */
 }
